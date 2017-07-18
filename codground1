@@ -1,0 +1,25 @@
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main(int argc, char** argv) {
+    int T; int test_case;
+    cin >> T;
+    for (test_case = 1; test_case <= T; ++test_case) { 
+        // 이 부분에서 알고리즘 프로그램을 작성하십시오. 
+        int N;  
+        cin >> N;  
+        vector<int> vt(N);
+        
+        int ret = 0;  
+        for (int i = 0; i < N; i++){
+            cin >> vt[i];   ret ^= vt[i];  
+        }  
+        // 이 부분에서 정답을 출력하십시오.    
+        cout << "Case #" << test_case << endl; 
+        cout << ret << endl;  
+    }
+return 0; // 정상종료 시 반드시 0을 리턴해야 합니다.
+}

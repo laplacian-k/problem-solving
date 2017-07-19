@@ -26,10 +26,16 @@ int main(int argc, char** argv) {
 			scanf("%d", &vt[i]);
 		}
 		sort(vt.begin(), vt.end());
-
+                
+		int limit = 0;
+		for(int i = 0; i < N; i++) {
+		    limit = max(limit, vt[i] + (N-i));
+		}
+		
 		int ret = 0;
+		
 		for (int i = 0; i < N; i++){
-			if (vt[i] + N >= vt[N - 1] + 1) ret++;
+			if (vt[i] + N >= limit) ret++;
 		}
 
 		//	이 부분에서 정답을 출력하십시오. Codeground 시스템에서는 C++ 에서도 printf 사용을 권장합니다. 

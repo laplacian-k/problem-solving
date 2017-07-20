@@ -1,0 +1,113 @@
+// 아래 기본 제공된 코드를 수정 또는 삭제하고 본인이 코드를 사용하셔도 됩니다.
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <math.h>
+using namespace std;
+
+// valuable
+int bull;
+int trp_s;
+int trp_e;
+int dbl_s;
+int dbl_e;
+int x, y;
+
+// data
+const int num[20] = {6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19, 3, 17, 2, 15, 10}
+
+// function
+int calcVal(int x, int y)
+{
+    // bull, triple, double의 범위가 주어짐.
+    // x, y 기준으로 반지름의 길이를 구해 비교함. 
+    // x^2 + y^2과 r^2을 비교한다.
+    // 경계에 걸쳐도 해당 배수를 곱하자.
+    
+    int len = x*x + y*y;
+    
+    // 벗어나면 0
+    if(len > dbl_e * dbl_e)
+        return 0;
+    // 트리플이면 3
+    if(trp_s*trp_s <= len && len <= trp_e*trp_e)
+        return 3;
+    // 더블이면 2
+    if(dbl_s*dbl_s <= len && len <= dbl_e*dbl_e)
+        return 2;
+    // 일반적인 경우는 1을 곱함.
+    return 1;
+}
+
+// x, y를 활용하여 각도를 계산.
+int calcScore(int x, int y)
+{
+    // tan(theta) = y/x
+    // theta = atan(y/x)
+    double theta = atan(double)y/x;
+    
+    // theta 후처리
+    theta = theta % 360;
+    // 음수일 경우만 +360
+    if(theta < 0)
+        theta = theta + 360;
+    
+    // theta를 기준으로 score 계산
+    // 기준을 어떻게 나눌것인가?
+    // 0~9 or 351~360
+    // 9~ 27 / 27 = 0
+    // 27 ~ 45
+    // ...
+}
+int main(int argc, char** argv) {
+	/* 아래 freopen 함수는 input.txt 를 read only 형식으로 연 후,
+	   앞으로 표준 입력(키보드) 대신 input.txt 파일로 부터 읽어오겠다는 의미의 코드입니다.
+	   만약 본인의 PC 에서 테스트 할 때는, 입력값을 input.txt에 저장한 후 freopen 함수를 사용하면,
+	   그 아래에서 scanf 함수 또는 cin을 사용하여 표준입력 대신 input.txt 파일로 부터 입력값을 읽어 올 수 있습니다.
+	   또한, 본인 PC에서 freopen 함수를 사용하지 않고 표준입력을 사용하여 테스트하셔도 무방합니다.
+	   단, Codeground 시스템에서 "제출하기" 할 때에는 반드시 freopen 함수를 지우거나 주석(//) 처리 하셔야 합니다. */
+	//freopen("input.txt", "r", stdin);
+
+	setbuf(stdout, NULL);
+
+	int TC;
+	int test_case;
+    
+	scanf("%d", &TC);	// cin 사용 가능
+	for(test_case = 1; test_case <= TC; test_case++) {
+		// 이 부분에서 알고리즘 프로그램을 작성하십시오.
+
+        
+        scanf("%d", &bull);
+        scanf("%d", &trp_s);
+        scanf("%d", &trp_e);
+        scanf("%d", &dbl_s);
+        scanf("%d", &dbl_e);
+        
+        int N;
+        scanf("%d", &N);
+        
+        int ret = 0;
+        
+        // for문을 돌면서 점수를 계산하고 바로 합산.
+        for(int i = 0; i < N; i++) {
+            scanf("%d", &x);
+            scanf("%d", &y);
+            
+            // 몇 배수냐? : triple, double, out의 범위를 활용해서 계산. 벗어나는 건 0으로 계산.
+            int val = calcVal(x, y);
+            // 몇점이냐? : 각도를 이용해서 계산
+            int score = calcScore(x, y);
+            
+            ret += val * score;
+            
+        }
+        
+		// 이 부분에서 정답을 출력하십시오.
+		printf("Case #%d\n", test_case);	// cout 사용 가능
+        printf("%d\n", ret);	// cout 사용 가능
+	}
+
+	return 0;	// 정상종료 시 반드시 0을 리턴해야 합니다.
+}

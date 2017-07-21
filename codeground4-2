@@ -6,6 +6,8 @@
 #include <math.h>
 using namespace std;
 
+#define PI 3.14159265
+
 // valuable
 int bull;
 int trp_s;
@@ -30,6 +32,9 @@ int calcVal(int x, int y)
     // 벗어나면 0
     if(len > dbl_e * dbl_e)
         return 0;
+    // bull이면 50
+    if(len <= bull*bull)
+        return 50;
     // 트리플이면 3
     if(trp_s*trp_s <= len && len <= trp_e*trp_e)
         return 3;
@@ -45,10 +50,11 @@ int calcScore(int x, int y)
 {
     // tan(theta) = y/x
     // theta = atan(y/x)
-    double theta = atan(double)y/x;
+    // atan c++ api 참고 : http://www.cplusplus.com/reference/cmath/atan/
+    // atan2 c++ api 참고 : http://www.cplusplus.com/reference/cmath/atan2/
+    double theta = atan2((double)y, (double)x) * (180 / PI);
     
-    // theta 후처리
-    theta = theta % 360;
+    // theta 후처리.
     // 음수일 경우만 +360
     if(theta < 0)
         theta = theta + 360;
@@ -56,15 +62,16 @@ int calcScore(int x, int y)
     // theta를 기준으로 score 계산
     // 기준을 어떻게 나눌것인가?
     // -9도 한 후 18로 나눈 정수 + 1
-    // 0~9 or 351~360
-    // 9~ 27 / 27 = 0
-    // 27 ~ 45
+    // [0, 9) or (351, 360)
+    // (9, 27)
+    // (27, 45)
+    // (45, 63)
     // ...
     // 경계는 따지지 않는다.
-    if( (0 < theta && theta < 9) || (351 < theta && theta < 360) )
+    if( (0 <= theta && theta < 9) || (351 < theta && theta < 360) )
         return num[0];
         
-    return num[ (theta-9)/18+1 ];
+    return num[ (int)(theta-9)/18+1 ];
     
     
 }
@@ -105,10 +112,16 @@ int main(int argc, char** argv) {
             
             // 몇 배수냐? : triple, double, out의 범위를 활용해서 계산. 벗어나는 건 0으로 계산.
             int val = calcVal(x, y);
+            //cout << "val : " << val << endl;
             // 몇점이냐? : 각도를 이용해서 계산
             int score = calcScore(x, y);
+            //cout << "score : " << score << endl;
             
-            ret += val * score;
+            // bull이면 50점만 더해줌.
+            if(val == 50)
+                ret += val;
+            else
+                ret += val * score;
             
         }
         

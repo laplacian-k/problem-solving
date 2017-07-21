@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#define _USE_MATH_DEFINES
 #include <math.h>
 using namespace std;
 
@@ -48,43 +49,56 @@ int main(int argc, char** argv) {
         int y;
         
         int ret = 0;
-        
+        scanf("%d", &N);
         for(int i = 0; i < N; i++) {
+            
             scanf("%d", &x);
             scanf("%d", &y);
+                     
+            int circle = (x*x) + (y*y);    // x^2 + y^2
+            
+            //out of board 판정
+            if( circle > dbl_end*dbl_end) continue;
+            //무조건 bull인 경우
+            if( circle <= bull_end*bull_end ) { ret += 50; continue; }
+            
+            int m = 1;    // single, double, triple 여부 판별
+            if      ( trp_strt*trp_strt <= circle && circle <= trp_end*trp_end ) m = 3;
+            else if ( dbl_strt*dbl_strt <= circle && circle <= dbl_end*dbl_end ) m = 2;
+            
+            // x, y축에 존재하는 경우
+            if( x == 0 && y > 0 ) { ret += m*20; continue; }
+            else if( x == 0 && y < 0 ) { ret += m*3; continue; }
+            else if( x > 0 && y == 0 ) { ret += m*6; continue; }
+            else if( x < 0 && y == 0 ) { ret += m*11; continue; }
+            
             
             // 몇사분면?
-            int position;
+            int position = -1;            
             if     ( x > 0 && y > 0 ) position = 1;
             else if( x < 0 && y > 0 ) position = 2;
             else if( x < 0 && y < 0 ) position = 3;
             else if( x > 0 && y < 0 ) position = 4;
                 
             // 양수로 만듦
-            if ( x < 0 ) x = -x;
-            if ( y < 0 ) y = -y;
+            if ( x < 0 ) x = abs(x);
+            if ( y < 0 ) y = abs(y);          
+            
                 
             // 각도 측정 tan(theta) = y/x
             double theta = atan((double)y/x);    // y를 double형으로 바꾸면 double로 자동 형변환
-                       
+            theta = theta * (180 / M_PI);    // theta값을 구하기 위한 연산
+            
             int val = score[position-1][(int)theta/9];    // 9로 나눈 각도에 따라 점수 배정
             
-            // x^2 + y^2 = r^2 원의 방정식을 통해 bull, triple, double, single, outofboard를 판정함
             
-            int circle = x*x + y*y;
+            ret += m*val;
             
-            if      ( circle <= bull_end)                       ret += 50;
-            else if ( trp_strt <= circle && circle <= trp_end ) ret += 3*val;
-            else if ( dbl_strt <= circle && circle <= dbl_end ) ret += 2*val;
-            else if ( circle > dbl_end )                        ret  = ret;    // do noting
-            else                                                ret += val;
-               
-        
         }
         
-        
-		// 이 부분에서 정답을 출력하십시오.
-		printf("Case #%d\n", test_case);	// cout 사용 가능
+
+	// 이 부분에서 정답을 출력하십시오.
+	printf("Case #%d\n", test_case);	// cout 사용 가능
         printf("%d\n", ret);	// cout 사용 가능
 	}
 

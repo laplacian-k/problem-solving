@@ -1,0 +1,74 @@
+#include <iostream>
+
+using namespace std;
+
+const int MOD = 1000000007;
+int N, M;
+long long fact[2000003];
+
+// dp for factorial
+void doPreprocess()
+{
+    fact[0] = 1;
+    for(int i = 1; i < 2000003; i++)
+        fact[i] = (fact[i-1] * i) % MOD;
+}
+
+long long square(long long x, int n)
+{
+	//cout << x << ", " << n << endl;
+    if(n == 1) return x;
+    // 중복연산을 최소화 하는게 목적
+    long long half = square(x, n/2);
+    long long half_square = (half * half) % MOD;
+    if(n%2 == 0)
+        return half_square;
+    else
+        return (x*half_square) % MOD;
+        
+    
+}
+
+long long solve(int N, int M)
+{
+    // N+M+2CM+1 - 1을 구해야 함.
+    // (M+N+2)!/(N+1)!*(M+1)! - 1
+    // a^p-2 = 1/a (mod p) 페르마의 소정리 이용.
+    // (M+N+2)!* {(N+1)!*(M+1)!}^p-2 -1 (mod p) 를 구하면 된다.
+    
+    long long b = fact[M+N+2];
+    long long a = (fact[N+1]*fact[M+1]) % MOD;
+    
+    long long val = square(a, MOD-2);
+    
+    //cout << "b : " << b << endl;
+    //cout << "a : " << a << endl;
+    //cout << "val : " << val << endl;
+    
+    return (b*val) % MOD -1;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	// freopen("input.txt", "r", stdin);
+
+
+    // factorial 전처리
+    doPreprocess();
+    
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+        cin >> N;
+        cin >> M;
+        
+        long long ret = solve(N, M);    // ret = (M+N+1)C(N+1)
+		// Print the answer to standard output(screen).
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

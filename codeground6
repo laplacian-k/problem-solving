@@ -1,0 +1,85 @@
+#include <cstdio>
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+
+using namespace std;
+
+unsigned long long vt[200000] = {0};
+
+int main(int argc, char** argv) {
+	/* 아래 freopen 함수는 input.txt 를 read only 형식으로 연 후,
+	앞으로 표준 입력(키보드) 대신 input.txt 파일로 부터 읽어오겠다는 의미의 코드입니다.
+	만약 본인의 PC 에서 테스트 할 때는, 입력값을 input.txt에 저장한 후 freopen 함수를 사용하면,
+	그 아래에서 scanf 함수 또는 cin을 사용하여 표준입력 대신 input.txt 파일로 부터 입력값을 읽어 올 수 있습니다.
+	또한, 본인 PC에서 freopen 함수를 사용하지 않고 표준입력을 사용하여 테스트하셔도 무방합니다.
+	단, Codeground 시스템에서 "제출하기" 할 때에는 반드시 freopen 함수를 지우거나 주석(//) 처리 하셔야 합니다. */
+	//freopen("input.txt", "r", stdin);
+
+	setbuf(stdout, NULL);
+
+	int TC;
+	int test_case;
+
+	scanf("%d", &TC);	// cin 사용 가능
+	for (test_case = 1; test_case <= TC; test_case++) {
+
+		int N;
+		int K;
+		cin >> N;
+		cin >> K;
+        
+        // 문자열 입력받음.
+		string input;
+		cin >> input;
+        
+        // 각 대각선별 시작 점수를 저장함.
+        vt[0] = 1;        
+        for(int i = 1; i < 2*N-1; i++) {
+            if(i <= N) { vt[i] = vt[i-1] + i; }
+            else { vt[i] = vt[i-1] + ( N-(i-N) ); }
+            
+            //cout << vt[i] << " " ;
+        }
+        //cout << endl;
+        
+        // 현재 좌표
+		int a = 0;
+        int b = 0;
+        
+        unsigned long long ret = 1;    // 결과값
+        
+        for(int i = 0; i < K; i++) {
+            
+            if(input[i] == 'D') { a++; }
+            else if(input[i] == 'R') { b++; }
+            else if(input[i] == 'U') { a--; }
+            else if(input[i] == 'L') { b--; }
+            
+            //cout << "현재위치 : " << "(" << a << ", " << b << ")" << endl;
+            // 현재 대각선의 시작원소의 점수값은 vt[a+b]로 접근
+            unsigned long long score = vt[a+b];  // 좌표 기준 현재 대각선 시작원소의 점수
+        
+            // 현재 위치를 기준으로 시작원소와 얼마나 떨어졌는지 찾는 알고리즘.
+            string direction = ( (a+b) % 2 == 0 ) ? "right" : "left";
+            int length = 0;
+            
+            if( a+b <= N-1 ) {    // 윗쪽 삼각형이라면
+                if( direction == "left" ) {  score += a; }    // a = 0 (시작원소) 에서 현재좌표(a,b)까지 이동
+                else { score += b; }    // a = 0 으로 투사
+            }
+            else {
+                if( direction == "left" ) {  score += (N-1) - b; }    // a = N-1 으로 투사
+                else { score += (N-1) - a; }    // b = N-1 으로 투사
+            }
+            
+            ret += score;
+        }
+
+		// 이 부분에서 정답을 출력하십시오.
+		printf("Case #%d\n", test_case);	// cout 사용 가능
+		printf("%llu\n", ret);
+	}
+
+	return 0;	// 정상종료 시 반드시 0을 리턴해야 합니다.
+}

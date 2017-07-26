@@ -23,6 +23,11 @@ int main(int argc, char** argv)
 	    string path;
 	    cin >> path;    // U, R, D, L
 	    
+	    // N의 최대값이 100000이므로 미리 방을 만들어 놓을 수 없다.
+-	    // memory limit exceed 발생할 것임.
+-	    // makeRoom();
+-	    // 움직이면서 점수를 계산해야 한다!
+	    
 	    data cur = {0, 0};    // 현재 좌표
 	    data dest = {0, 0};    // 목적 좌표 (점수를 구해야 함.)
 	    long long ret = 1;    // 점수의 총합. 

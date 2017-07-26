@@ -1,0 +1,148 @@
+#include <iostream>
+#include <string>
+#include <math.h>
+
+using namespace std;
+int N, K;
+string path;
+
+struct data
+{
+    int y, x;
+};
+
+long long dist(data cur, data next)
+{
+    // distance from cur to next
+    return sqrt( (next.y-cur.y)*(next.y-cur.y) + (next.x-cur.x)*(next.x-cur.x) );
+}
+
+data move(data cur, string direction)
+{
+    data temp = cur;
+    
+    if(direction == "U")
+        temp.y = temp.y - 1;
+    if(direction == "R")
+        temp.x = temp.x + 1;
+    if(direction == "D")
+        temp.y = temp.y + 1;
+    if(direction == "L")
+        temp.x = temp.x - 1;
+        
+    return temp;
+}
+
+// 점수의 합계를 구하는 함수.
+long long calcScore(string path)
+{
+    data cur = {0, 0};    // (y, x)
+    
+    long long ret = 1;
+    long long score = 1;    // 첫 위치는 1점
+    
+    for(int i = 0; i < K; i++)
+    {
+    	data next = {0, 0};
+        string direction = path.substr(i, 1);  // U, R, D, L
+        
+        long long len = 0;    // cur부터 dest까지 대각선을 따라 이동하는 거리.
+        // 현위치 기준 끝점까지의 방향. 
+        bool isRightUpper = ((cur.y + cur.x)%2 == 0) ? true : false;
+        // 사각형 내부에서의 위치
+        bool isUpperTriangle = (cur.y < N  && cur.x < N) ? true : false;
+        
+        cout << "right upper? : " << isRightUpper << endl;
+        cout << "upper triangle? : " << isUpperTriangle << endl;
+        
+        // 끝점 이동, 다음 대각선까지 이동
+        
+        // y = 0으로, 우로 한칸 이동.
+        if(isRightUpper && isUpperTriangle) {
+            next.y = 0;
+            next.x = cur.y + cur.x;
+            // cur부터 next까지의 거리를 구함.
+            len = dist(cur, next);
+            cout << "len1 : " << len << endl;
+            
+            next.x = next.x + 1;
+        }
+        // x = N으로, 아래로 한칸 이동.
+        if(isRightUpper && !isUpperTriangle) {
+            next.y = cur.y + cur.x - N;
+            next.x = N;
+            // cur부터 next까지의 거리를 구함.
+            len = dist(cur, next);
+            
+            next.y = next.y + 1;
+        }
+        // x = 0으로, 아래로 한칸 이동.
+        if(!isRightUpper && isUpperTriangle) {
+            next.y = cur.y + cur.x;
+            next.x = 0;
+            // cur부터 next까지의 거리를 구함.
+            len = dist(cur, next);
+        
+            next.y = next.y + 1;
+        }
+        // y = N으로, 우로 한칸 이동.
+        if(!isRightUpper && !isUpperTriangle) {
+            next.y = N;
+            next.x = cur.y + cur.x - N;
+            // cur부터 next까지의 거리를 구함.
+            len = dist(cur, next);
+            
+            next.x = next.x + 1;
+        }
+        
+        len += 1;
+        
+        // 목적 좌표를 구함.
+        data dest = move(cur, direction);
+        
+        // 목적 좌표까지 이동한 거리를 더함.
+        len += dist(next, dest);
+        cout << "len2 : " << dist(next, dest) << endl;
+        
+        // score 합산 : 총 점수 = 현재위치 점수 + 다음위치 점수 = 현재위치 점수 + (현재위치점수 + 대각선을 따라 이동한 거리)
+        // R, D일 경우와 L, U일 경우를 다르게 생각한다.
+        // L, U일 경우 dest를 cur로 cur을 dest로 두고 구한다.
+        score += len;
+        ret += score;
+        cout << "len : " << len << endl;
+        cout << "score : " << score << endl;
+        
+        cur = dest;
+    }
+    
+    return ret;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    cin >> N;
+	    
+	    // N의 최대값이 100000이므로 미리 방을 만들어 놓을 수 없다.
+	    // memory limit exceed 발생할 것임.
+	    // makeRoom();
+	    // 움직이면서 점수를 계산해야 한다!
+	    
+	    cin >> K;
+	    cin >> path;
+	    
+	    long long ret = 0;
+	    
+	    ret = calcScore(path);
+		
+		// Print the answer to standard output(screen).
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

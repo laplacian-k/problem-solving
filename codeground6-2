@@ -1,138 +1,125 @@
 #include <iostream>
+#include <cmath>    // for abs
 #include <string>
-#include <math.h>
 
 using namespace std;
-int N, K;
-string path;
 
-struct data
-{
+// variables
+int N, K;
+
+
+struct data {
     int y, x;
 };
-
-data move(data cur, string direction)
-{
-    data temp = cur;
-    
-    if(direction == "U")
-        temp.y = temp.y - 1;
-    if(direction == "R")
-        temp.x = temp.x + 1;
-    if(direction == "D")
-        temp.y = temp.y + 1;
-    if(direction == "L")
-        temp.x = temp.x - 1;
-        
-    return temp;
-}
-
-// 점수의 합계를 구하는 함수.
-long long calcScore(string path)
-{
-    data cur = {0, 0};    // (y, x)
-    
-    long long ret = 1;
-    long long score = 1;    // 첫 위치는 1점
-    
-    for(int i = 0; i < K; i++)
-    {
-    	data next = {0, 0};
-        string direction = path.substr(i, 1);  // U, R, D, L
-        
-        long long len = 0;    // cur부터 dest까지 대각선을 따라 이동하는 거리.
-        // 현위치 기준 대각선 끝점까지의 방향. 
-        bool isRightUpper = ((cur.y + cur.x)%2 == 0) ? true : false;
-        // 사각형 내부에서의 위치
-        bool isUpperTriangle = ((cur.y + cur.x) < N) ? true : false;
-        
-        cout << "right upper? : " << isRightUpper << endl;
-        cout << "upper triangle? : " << isUpperTriangle << endl;
-        
-        // 끝점 이동, 다음 대각선까지 이동
-        
-        // y = 0으로, 우로 한칸 이동.
-        if(isRightUpper && isUpperTriangle) {
-            next.y = 0;
-            next.x = cur.y + cur.x;
-            // cur부터 next까지의 거리를 구함. y = 0으로 이동한만큼 더해줌.
-            len = cur.y;
-            cout << "len1 : " << len << endl;
-            next.x = next.x + 1;
-        }
-        // x = N-1로, 아래로 한칸 이동.
-        if(isRightUpper && !isUpperTriangle) {
-            next.y = cur.y + cur.x - (N-1);
-            next.x = N-1;
-            // cur부터 next까지의 거리를 구함. x = N-1 로 이동한만큼 더해줌.
-            len = N-1 - cur.x;
-            
-            next.y = next.y + 1;
-        }
-        // x = 0으로, 아래로 한칸 이동.
-        if(!isRightUpper && isUpperTriangle) {
-            next.y = cur.y + cur.x;
-            next.x = 0;
-            // cur부터 next까지의 거리를 구함. x = 0으로 이동한만큼 더해줌.
-            len = cur.x;
-        
-            next.y = next.y + 1;
-        }
-        // y = N-1로, 우로 한칸 이동.
-        if(!isRightUpper && !isUpperTriangle) {
-            next.y = N-1;
-            next.x = cur.y + cur.x - (N-1);
-            // cur부터 next까지의 거리를 구함. y = N-1로 이동한만큼 더해줌.
-            len = (N-1) - cur.y;
-            
-            next.x = next.x + 1;
-        }
-        
-        len += 1;
-        
-        // 목적 좌표를 구함.
-        data dest = move(cur, direction);
-        
-        // 목적 좌표까지 이동한 거리를 더함. next와 dest의 x 좌표 차이의 절대값으로 구한다.
-        len += abs(next.x - dest.x);
-        cout << "len2 : " << dist(next, dest) << endl;
-        
-        // score 합산 : 총 점수 = 현재위치 점수 + 다음위치 점수 = 현재위치 점수 + (현재위치점수 + 대각선을 따라 이동한 거리)
-        // R, D일 경우와 L, U일 경우를 다르게 생각한다.
-        // L, U일 경우 dest를 cur로 cur을 dest로 두고 구한다.
-        score += len;
-        ret += score;
-        cout << "len : " << len << endl;
-        cout << "score : " << score << endl;
-        
-        cur = dest;
-    }
-    
-    return ret;
-}
 
 int main(int argc, char** argv)
 {
 	int T, test_case;
-
+	
 	cin >> T;
 	for(test_case = 0; test_case  < T; test_case++)
 	{
-	    cin >> N;
+	    cin >> N >> K;
+	    string path;
+	    cin >> path;    // U, R, D, L
 	    
-	    // N의 최대값이 100000이므로 미리 방을 만들어 놓을 수 없다.
-	    // memory limit exceed 발생할 것임.
-	    // makeRoom();
-	    // 움직이면서 점수를 계산해야 한다!
+	    data cur = {0, 0};    // 현재 좌표
+	    data dest = {0, 0};    // 목적 좌표 (점수를 구해야 함.)
+	    long long ret = 1;    // 점수의 총합. 
+	    long long score = 1;    // 현재의 점수.
 	    
-	    cin >> K;
-	    cin >> path;
-	    
-	    long long ret = 0;
-	    
-	    ret = calcScore(path);
+	    for(int i = 0; i < K; i++)
+	    {
+	        char direction = path[i];
+	        //cout << direction << endl;
+	        // 목적좌표를 구한다.
+	        // R, D와 U, L의 이동 방법은 다르다. U, L의 경우는 cur과 dest 좌표를 바꾼 후 같은 로직을 실행. 단 x + len = score(현재)이므로 score-len으로 점수를 구한다. 일반적인 경우는 score + len
+	        if(direction == 'R') {
+	            dest.y = cur.y;
+	            dest.x = cur.x+1;
+	        }
+	        if(direction == 'D') {
+	            dest.y = cur.y+1;
+	            dest.x = cur.x;
+	        }
+	        if(direction == 'U') {
+	            dest.y = cur.y-1;
+	            dest.x = cur.x;
+	        }
+	        if(direction == 'L') {
+	            dest.y = cur.y;
+	            dest.x = cur.x-1;
+	        }
+	        
+	        data temp = {0, 0};    // 임시 변수
+	        if(direction == 'U' || direction == 'L') {
+	            temp = dest;
+	            dest = cur;
+	            cur = temp;
+	        }
+	        //cout << cur.y << ", " << cur.x << endl;
+	        //cout << dest.y << ", " << dest.x << endl;
+	        
+	        long long len = 0;    // 움직이는 거리를 더해간다.
+	        
+	        // y+x 가 짝수이면 우상향 대각선.
+	        bool isUpperRight = ((cur.y + cur.x)%2 == 0) ? true : false;
+	        // y+x < N 이면 위쪽 삼각형.
+	        bool isUpperTriangle = ((cur.y + cur.x) < N-1) ? true : false; 
+	        // 1. 현재 좌표 기준 대각선의 끝점으로 이동.
+	        // 2. 다음 대각선으로 한칸 이동
+	        if(isUpperRight && isUpperTriangle) {
+	            // y = 0으로 투사.
+	            len = cur.y;
+	            cur.x = cur.y + cur.x;
+	            cur.y = 0;
+	            // 우로 한칸 이동.
+	            len += 1;
+	            cur.x += 1;
+	        }
+	        if(isUpperRight && !isUpperTriangle) {
+	            // x = N-1로 투사.
+	            len = (N-1)-cur.x;
+	            cur.y = cur.y + cur.x - (N-1);
+	            cur.x = N-1;
+	            // 아래로 한칸 이동.
+	            len += 1;
+	            cur.y += 1;
+	        }
+	        if(!isUpperRight && isUpperTriangle) {
+	            // x = 0으로 투사.
+	            len = cur.x;
+	            cur.y = cur.y + cur.x;
+	            cur.x = 0;
+	            // 아래로 한칸 이동.
+	            len += 1;
+	            cur.y += 1;
+	        }
+	        if(!isUpperRight && !isUpperTriangle) {
+	            // y = N-1로 투사.
+	            len = (N-1)-cur.y;
+	            cur.x = cur.y + cur.x - (N-1);
+	            cur.y = N-1;
+	            // 우로 한칸 이동.
+	            len += 1;
+	            cur.x += 1;
+	        }
+	        // 3. 목적 좌표까지 이동. (x좌표를 기준으로 움직인 거리를 계산한다.)
+	        len += abs(dest.x - cur.x);
+	        // 4. 현재좌표의 점수에서 목적좌표까지 이동한만큼 더해주면 목적좌표의 점수를 구할 수 있음.
+	        score = (direction == 'U' || direction == 'L') ? score - len : score + len;
+	        //cout << score << endl;
+	        // 5. 점수의 총합을 구해나감.
+	        ret =  ret + score;
+	        
+	        // 6. 현재좌표를 목적좌표로 바꿈.
+	        cur = dest;
+	        // U, L 일 경우 미리 저장해둔 변수를 대입
+	        if(direction == 'U' || direction == 'L')
+	        cur = temp;
+	    }
+
 		
-		// Print the answer to standard output(screen).
 		cout << "Case #" << test_case+1 << endl;
 		cout << ret << endl;
 	}

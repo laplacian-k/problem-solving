@@ -11,12 +11,6 @@ struct data
     int y, x;
 };
 
-long long dist(data cur, data next)
-{
-    // distance from cur to next
-    return sqrt( (next.y-cur.y)*(next.y-cur.y) + (next.x-cur.x)*(next.x-cur.x) );
-}
-
 data move(data cur, string direction)
 {
     data temp = cur;
@@ -47,10 +41,10 @@ long long calcScore(string path)
         string direction = path.substr(i, 1);  // U, R, D, L
         
         long long len = 0;    // cur부터 dest까지 대각선을 따라 이동하는 거리.
-        // 현위치 기준 끝점까지의 방향. 
+        // 현위치 기준 대각선 끝점까지의 방향. 
         bool isRightUpper = ((cur.y + cur.x)%2 == 0) ? true : false;
         // 사각형 내부에서의 위치
-        bool isUpperTriangle = (cur.y < N  && cur.x < N) ? true : false;
+        bool isUpperTriangle = ((cur.y + cur.x) < N) ? true : false;
         
         cout << "right upper? : " << isRightUpper << endl;
         cout << "upper triangle? : " << isUpperTriangle << endl;
@@ -61,18 +55,17 @@ long long calcScore(string path)
         if(isRightUpper && isUpperTriangle) {
             next.y = 0;
             next.x = cur.y + cur.x;
-            // cur부터 next까지의 거리를 구함.
-            len = dist(cur, next);
+            // cur부터 next까지의 거리를 구함. y = 0으로 이동한만큼 더해줌.
+            len = cur.y;
             cout << "len1 : " << len << endl;
-            
             next.x = next.x + 1;
         }
-        // x = N으로, 아래로 한칸 이동.
+        // x = N-1로, 아래로 한칸 이동.
         if(isRightUpper && !isUpperTriangle) {
-            next.y = cur.y + cur.x - N;
-            next.x = N;
-            // cur부터 next까지의 거리를 구함.
-            len = dist(cur, next);
+            next.y = cur.y + cur.x - (N-1);
+            next.x = N-1;
+            // cur부터 next까지의 거리를 구함. x = N-1 로 이동한만큼 더해줌.
+            len = N-1 - cur.x;
             
             next.y = next.y + 1;
         }
@@ -80,17 +73,17 @@ long long calcScore(string path)
         if(!isRightUpper && isUpperTriangle) {
             next.y = cur.y + cur.x;
             next.x = 0;
-            // cur부터 next까지의 거리를 구함.
-            len = dist(cur, next);
+            // cur부터 next까지의 거리를 구함. x = 0으로 이동한만큼 더해줌.
+            len = cur.x;
         
             next.y = next.y + 1;
         }
-        // y = N으로, 우로 한칸 이동.
+        // y = N-1로, 우로 한칸 이동.
         if(!isRightUpper && !isUpperTriangle) {
-            next.y = N;
-            next.x = cur.y + cur.x - N;
-            // cur부터 next까지의 거리를 구함.
-            len = dist(cur, next);
+            next.y = N-1;
+            next.x = cur.y + cur.x - (N-1);
+            // cur부터 next까지의 거리를 구함. y = N-1로 이동한만큼 더해줌.
+            len = (N-1) - cur.y;
             
             next.x = next.x + 1;
         }
@@ -100,8 +93,8 @@ long long calcScore(string path)
         // 목적 좌표를 구함.
         data dest = move(cur, direction);
         
-        // 목적 좌표까지 이동한 거리를 더함.
-        len += dist(next, dest);
+        // 목적 좌표까지 이동한 거리를 더함. next와 dest의 x 좌표 차이의 절대값으로 구한다.
+        len += abs(next.x - dest.x);
         cout << "len2 : " << dist(next, dest) << endl;
         
         // score 합산 : 총 점수 = 현재위치 점수 + 다음위치 점수 = 현재위치 점수 + (현재위치점수 + 대각선을 따라 이동한 거리)

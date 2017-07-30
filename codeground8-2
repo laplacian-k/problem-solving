@@ -1,0 +1,51 @@
+#include <iostream>
+#include <algorithm>    // for max
+#include <string.h>    // for memset
+
+using namespace std;
+
+// variables
+int N;
+int h[100002];
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // 양 끝점 판단을 위해 h[0] = h[N+1] = 0
+	    memset(h, 0, sizeof(h));
+	    
+	    cin >> N;
+	    // input
+	    for(int i = 1; i <= N; i++) {
+	        cin >> h[i];
+	    }
+	    
+	    int ret = -1;
+	    // 1. 정답에 영향을 끼치는 내부 도형을 찾는다.
+	    // 판단 후 h[i] data를 직접 변경한다.
+	    // 1-1. 왼쪽 높이보다 크면 왼쪽높이 + 1을 저장. 나머지 경우는 그대로.
+	    for(int i = 1; i <= N; i++) {
+	        if(h[i-1] < h[i])
+	            h[i] = h[i-1] + 1;
+	    }
+	        
+	    // 1-2. 오른쪽 높이보다 크면 오른쪽높이 + 1을 저장. 나머지 경우는 그대로.
+	    for(int i = N; i >= 1; i--) {
+	        if(h[i+1] < h[i])
+	            h[i] = h[i+1] + 1;
+	    }
+	    
+	    // 2. 그 도형의 최대 높이가 정답이다.
+	    for(int i = 1; i <= N; i++)
+	       ret = max(ret, h[i]);
+	       
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

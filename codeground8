@@ -1,0 +1,105 @@
+// 아래 기본 제공된 코드를 수정 또는 삭제하고 본인이 코드를 사용하셔도 됩니다.
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <string.h>
+using namespace std;
+
+int h[100002];
+int t[100002];
+int N;
+
+int solve1();
+
+int main(int argc, char** argv) {
+
+	setbuf(stdout, NULL);
+
+	int TC;
+	int test_case;
+    
+	scanf("%d", &TC);	// cin 사용 가능
+	for(test_case = 1; test_case <= TC; test_case++) {
+        
+        cin >> N;
+        
+        for(int i = 1; i <= N; i++) {
+            cin >> h[i];
+        }
+        
+        //int ret = solve1();
+        
+        
+        int ret = -1;
+        
+        // 1 time에 높이 1을 제거하는 블럭들로 변형한다.        
+        // 양 끝 블럭은 무조건 1 time 지나면 삭제된다. 따라서 1로 높이를 변경한다.
+        h[1] = 1;    
+        h[N] = 1;
+        
+        // 1. 앞에서부터 시작하여 블럭 높이를 수정한다.
+        for(int i = 2; i <= N; i++) {
+            // 이전 블럭(왼쪽)에서 단위높이 1을 쌓아올린 것보다 현재 블럭 높이가 크다면 (이전블럭높이+1)로 값을 변경한다.
+            if( h[i] > h[i-1] + 1 ) h[i] = h[i-1] + 1;
+        }
+        
+        // 2. 뒤에서부터 시작하여 블럭 높이를 수정한다.
+        for(int i = N-1; i >= 1; i--) {
+            // 이전 블럭(오른쪽)에서 단위높이 1을 쌓아올린 것보다 현재 블럭 높이가 크다면 (이전블럭높이+1)로 값을 변경한다.
+            if( h[i] > h[i+1] + 1 ) h[i] = h[i+1] + 1;
+        }
+        
+        for(int i = 1; i <= N; i++) {
+            ret = max(ret, h[i]);
+        }
+            
+        
+        
+		// 이 부분에서 정답을 출력하십시오.
+		printf("Case #%d\n", test_case);	// cout 사용 가능
+        printf("%d\n", ret);	// cout 사용 가능
+	}
+
+	return 0;	// 정상종료 시 반드시 0을 리턴해야 합니다.
+}
+
+//무식한 방법을 사용한 풀이 백업
+int solve1(){
+    
+    // 양끝값 설정
+    h[0] = 0;
+    h[N+1] = 0;
+    
+    memset(h, 0, sizeof(h));
+    
+    int ret = 0;
+    
+    while(1) {
+        //bool isFinished = true;
+        for(int i = 1; i <= N; i++) {
+            if( h[i] == 0 ) continue;
+            //isFinished = false;
+            int minHeight = min(h[i-1], h[i+1]);
+            if(h[i] <= minHeight) t[i] = h[i] - 1;
+            else t[i] = minHeight;
+            //cout << "minHeight : " << minHeight << endl;
+            //cout << t[i] << endl;
+        }
+        
+        //int maxVal = -1;
+        bool isFinished = true;
+        for(int i = 1; i <= N; i++) {
+            h[i] = t[i];
+            if(h[i] != 0) isFinished = false;
+            //maxVal = max(maxVal, h[i]);
+            //cout << "maxVal : " << maxVal << endl;
+        }
+        
+        ret++;
+        // 최대값이 1이면 break;
+        // if(maxVal == 0) { ret = ret + 1; break; }
+        if( isFinished ) break;
+    }
+    
+    return ret;
+}

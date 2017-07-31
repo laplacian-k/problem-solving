@@ -1,0 +1,131 @@
+/* 문제를 푸실 때, 아래 "화학원소 기호"를 활용하시기 바랍니다.
+   "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al",
+   "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe",
+   "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr",
+   "Y","Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb",
+   "Te", "I", "Xe", "Cs", "Ba", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au",
+   "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Rf", "Db", "Sg",
+   "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Fl", "Lv", "La", "Ce", "Pr", "Nd",
+   "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Ac",
+   "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
+   "No", "Lr"   */
+
+// 아래 기본 제공된 코드를 수정 또는 삭제하고 본인이 코드를 사용하셔도 됩니다.
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <set>
+#include <algorithm>
+#include <map>
+
+using namespace std;
+
+set<string> chemical;
+set<string>::iterator iter;
+//map<string, int> cache;
+bool mark[50001];
+
+//bool solve3(string sentence);
+
+int main(int argc, char** argv) {
+	/* 아래 freopen 함수는 input.txt 를 read only 형식으로 연 후,
+	   앞으로 표준 입력(키보드) 대신 input.txt 파일로 부터 읽어오겠다는 의미의 코드입니다.
+	   만약 본인의 PC 에서 테스트 할 때는, 입력값을 input.txt에 저장한 후 freopen 함수를 사용하면,
+	   그 아래에서 scanf 함수 또는 cin을 사용하여 표준입력 대신 input.txt 파일로 부터 입력값을 읽어 올 수 있습니다.
+	   또한, 본인 PC에서 freopen 함수를 사용하지 않고 표준입력을 사용하여 테스트하셔도 무방합니다.
+	   단, Codeground 시스템에서 "제출하기" 할 때에는 반드시 freopen 함수를 지우거나 주석(//) 처리 하셔야 합니다. */
+	//freopen("input.txt", "r", stdin);
+
+	setbuf(stdout, NULL);
+
+	int TC;
+	int test_case;
+    
+    
+    string temp[] = {
+   "H" , "He", "Li", "Be", "B" , "C" , "N" , "O" , "F" , "Ne", "Na", "Mg", "Al",
+   "Si", "P" , "S" , "Cl", "Ar", "K" , "Ca", "Sc", "Ti", "V" , "Cr", "Mn", "Fe",
+   "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr",
+   "Y" , "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb",
+   "Te", "I" , "Xe", "Cs", "Ba", "Hf", "Ta", "W" , "Re", "Os", "Ir", "Pt", "Au",
+   "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Rf", "Db", "Sg",
+   "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Fl", "Lv", "La", "Ce", "Pr", "Nd",
+   "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Ac",
+   "Th", "Pa", "U" , "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
+   "No", "Lr" };
+   
+    // 소문자로 변환 
+    for(int i = 0; i < 114; i++) {
+   	   for(int j = 0; j < temp[i].length(); j++) {
+   	   	   temp[i][j] = tolower(temp[i][j]);    // a를 소문자로 변경
+   	   }
+   }
+   
+    // 집합에 넣음
+    
+    
+   for(int i = 0; i < 114; i++) {
+       chemical.insert(temp[i]);
+    }
+    
+    //iter = chemical.find("Be");
+    //if( iter == chemical.end() ) cout << "존재하지 않음" << endl;
+    
+	scanf("%d", &TC);	// cin 사용 가능
+	for(test_case = 1; test_case <= TC; test_case++) {
+		
+		for(int i = 0; i < 50001; i++)
+		    mark[i] = false;
+		    
+        string sentence;
+        cin >> sentence;
+        
+        for(int i = 0; i < sentence.length(); i++) {
+        	string sub1 = sentence.substr(i, 1);
+        	string sub2 = (i != sentence.length()-1) ? sentence.substr(i, 2) : "없음";
+        	bool isSub2Possible = (i == 0) ? true : mark[i-1];
+            
+            if( chemical.find(sub1) != chemical.end() ) mark[i]   = true;
+            if( sub2 != "없음" && isSub2Possible &&chemical.find(sub2) != chemical.end() ) mark[i+1] = true;
+            
+            if( !mark[i] && !mark[i+1]) break;
+        }
+        
+        printf("Case #%d\n", test_case);	// cout 사용 가능
+        
+        if( mark[sentence.length()-1] ) cout << "YES" << endl;
+        else cout << "NO" << endl;
+        //if( solve3(sentence) ) cout << "YES" << endl;
+        //else cout << "NO" << endl;
+        
+        
+	}
+
+	return 0;	// 정상종료 시 반드시 0을 리턴해야 합니다.
+}
+/*
+bool solve3(string sentence) {
+	
+	int &ret = cache[sentence];
+	if(ret != 0) return (ret == -1) ? false : true;
+	
+	int len = sentence.length();
+	
+	if( len == 1 || len == 2) return (chemical.find(sentence) != chemical.end());
+	
+    bool sub1 = ( chemical.find(sentence.substr(0,1)) != chemical.end() );
+    bool sub2 = ( chemical.find(sentence.substr(0,2)) != chemical.end() );
+    
+    //if( !sub1 && !sub2 ) return false;
+    
+    //if( sub1 && sub2 ) return solve3(sentence.substr(1, sentence.length())) || solve3(sentence.substr(2, sentence.length()));
+    
+    //if( sub1 ) return solve3(sentence.substr(1, sentence.length()));
+    //if( sub2 ) return solve3(sentence.substr(2, sentence.length()));
+    ret = (sub1 && solve3( sentence.substr(1, len) ) ) || (sub2 && solve3( sentence.substr(2, len) ) );
+    ret = (!ret) ? -1 : 1;    // ret 1 is true ret -1 is false
+    return (ret == -1) ? false : true;
+    
+}
+*/

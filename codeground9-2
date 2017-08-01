@@ -1,0 +1,86 @@
+#include <iostream>
+#include <string>    // for string
+#include <math.h>    // for abs
+#include <algorithm>    // for sort
+
+using namespace std;
+
+// variables
+
+string data[] = { "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al",
+   "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe",
+   "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr",
+   "Y","Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb",
+   "Te", "I", "Xe", "Cs", "Ba", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au",
+   "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Rf", "Db", "Sg",
+   "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Fl", "Lv", "La", "Ce", "Pr", "Nd",
+   "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Ac",
+   "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
+   "No", "Lr" };
+
+// brute-force의 경우 data.size()^50000번의 탐색이 일어난다. (depth가 50000)
+bool canSay(string subsen)
+{
+    int len = subsen.length();
+    
+    // len이 두글자 이상인 경우.
+    if(len >= 2) {
+        // 두글자씩 파싱해서 비교
+        string sen2 = subsen.substr(0, 2);
+        for(int i = 0; i < sizeof(data)/sizeof(string); i++) {
+            // data와 subsen이 같다면 다음 글자의 존재 여부를 계산함. 두글자인 경우 존재하면 바로 true 리턴
+            if(data[i] == sen2 && (len == 2 ||canSay(subsen.substr(2)))) return true;
+        }
+    }
+    // len이 한글자 이상인 경우.
+    if(len >= 1) {
+        // 한글자씩 파싱해서 비교
+        string sen1 = subsen.substr(0, 1);
+        for(int i = 0; i < sizeof(data)/sizeof(string); i++) {
+            // data와 subsen이 같다면 다음 글자의 존재 여부를 계산함.
+            if(data[i] == sen1 && (len == 1 || canSay(subsen.substr(1)))) return true;
+        }
+    }
+    
+    return false;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	int interval = abs('A'-'a');
+	// data preprocessing A->a
+	for(int i = 0; i < sizeof(data)/sizeof(string); i++) {
+	    for(int j = 0; j < data[i].size(); j++) {
+	        // 소문자면 그대로, 대문자면 변경.
+	        if( !('a' <= data[i][j] && data[i][j] <= 'z') )
+	            // 대문자 다음에 소문자의 아스키코드가 위치함.
+	            // 라이브러리 사용도 가능.
+	            data[i][j] = data[i][j] + interval;
+	    }
+	}
+	
+	// sorting
+	//sort( data, data+(sizeof(data)/sizeof(string)) );
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+        string sentence;
+        // input : 소문자로만 들어옴.
+        cin >> sentence;
+		
+		cout << "Case #" << test_case+1 << endl;
+		
+		
+		// 1. BST 활용. (set에 넣고 find)
+		// 2. 이진탐색 활용. (sort한 후 이진탐색 시행)
+		// 3. 캐시사용(메모이제이션)
+		if(canSay(sentence))
+		    cout << "YES" << endl;
+		else
+		    cout << "NO" << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

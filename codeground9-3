@@ -1,0 +1,91 @@
+#include <iostream>
+#include <string>    // for string
+#include <stdlib.h>    // for abs
+
+using namespace std;
+
+// variables
+
+string data[] = { "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al",
+   "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe",
+   "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr",
+   "Y","Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb",
+   "Te", "I", "Xe", "Cs", "Ba", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au",
+   "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Rf", "Db", "Sg",
+   "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Fl", "Lv", "La", "Ce", "Pr", "Nd",
+   "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Ac",
+   "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
+   "No", "Lr" };
+
+bool mark[50001];    // 주어진 sentence에 대해 문장을 만들 수 있는지 알기 위한 mark 정보.
+
+
+// 주기율표 데이터에서 입력한 단어를 찾는 함수.
+bool canSay(string sub)
+{
+    for(int i = 0; i < sizeof(data)/sizeof(string); i++){
+        if(sub == data[i])
+            return true;
+    }
+    
+    return false;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	int interval = abs('A'-'a');
+	// data preprocessing A->a
+	for(int i = 0; i < sizeof(data)/sizeof(string); i++) {
+	    for(int j = 0; j < data[i].size(); j++) {
+	        // 소문자면 그대로, 대문자면 변경.
+	        if( !('a' <= data[i][j] && data[i][j] <= 'z') )
+	            // 대문자 다음에 소문자의 아스키코드가 위치함.
+	            // 라이브러리 사용도 가능.
+	            data[i][j] = data[i][j] + interval;
+	    }
+	}
+	
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // init_mark
+	    for(int i = 0; i < 50001; i++)
+	        mark[i] = false;
+	        
+        string sentence;
+        // input : 소문자로만 들어옴.
+        cin >> sentence;
+		
+		// mark algorithm
+		for(int i = 0; i < sentence.length(); i++) {
+		    int len = sentence.substr(i).length();
+		    
+		    if(len >= 1) {
+		        string sub1 = sentence.substr(i, 1);
+		        if(canSay(sub1))
+		            mark[i] = true;
+		    }
+		    
+		    if(len >= 2) {
+		        string sub2 = sentence.substr(i, 2);
+		        // sub2만 계속 만족할 경우는? mark[i-1]을 확인한다. 첫번째에 sub1을 만족하지 않고 두번 연속 sub2를 만족할 경우 마킹하지 않는다.
+		        if((i==0 || mark[i-1]) && canSay(sub2))
+		            mark[i+1] = true;
+		    }
+		
+		    // 한자리, 두자리 substring 모두 찾을 수 없으면 탐색 종료
+		    if(!mark[i] && !mark[i+1])
+		        break;
+		}
+		cout << "Case #" << test_case+1 << endl;
+		// 끝까지 찾았다면 true
+		if(mark[sentence.length()-1])
+		    cout << "YES" << endl;
+		else
+		    cout << "NO" << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

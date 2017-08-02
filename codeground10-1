@@ -1,0 +1,157 @@
+/*
+You should use the statndard input/output
+
+in order to receive a score properly.
+
+Do not use file input and output
+
+Please be very careful. 
+*/
+
+#include <iostream>
+#include <string.h>
+#include <algorithm>
+
+using namespace std;
+
+const long long MOD = 1000000007;
+
+int N, M, K;
+long long fac[200001];    // N+M의 최대값으로 잡는다.
+long long fac_inv[200001];
+
+typedef struct data
+{
+    int y;
+    int x;
+}data;
+
+data obt[2002];
+long long cache[2002];    //메모이제이션
+
+long long get_exp(long long x, long long n);
+long long solve(int cur);
+long long comb(data str, data end);
+
+bool compare(data str, data end)
+{
+	return (str.y < end.y || (str.y == end.y && str.x <= end.x) );
+	//return (str.y > end.y || (str.y == end.y && str.x > end.x) );
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+    
+	// 전처리(factorial값 계산)
+    // a^(p-2) = 1/a (mod p) 에 대해 합동!
+    // (1,1)에서 (N, M)까지 가는 경우의 수는 (N+M-2)! / { (N-1)! * (M-1)! } 
+    // (N+M-2)! / { (N-1)! * (M-1)! } = (N+M-2)! * { (N-1)! * (M-1)! } ^(p-2) (mod p) 에 대해 합동!
+    // 속도를 더 빠르게 하기 위해 (N+M-2)! * { (N-1)!^(p-2) * (M-1)!^(p-2) } (mod p) 로 계산함!
+    fac[0] = fac_inv[0] = 1;    // 0! = 1
+    for(int i = 1; i < 200001; i++)
+    {
+        fac[i] = ( (i % MOD) * (fac[i-1] % MOD) ) % MOD;
+        fac_inv[i] = get_exp(fac[i], MOD-2);
+    }
+        
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+        // 초기화
+        for(int i = 0; i < 2002; i++)
+        {
+            obt[i].y = -1;
+            obt[i].x = -1;
+        }
+        
+        memset(cache, -1, sizeof(cache));
+        
+        
+		long long ret = 0;
+		
+		// 입력부
+		cin >> N >> M >> K;
+		
+		//obt[0]는 시작점, obt[2001] 끝점
+		obt[0].y = 1;
+        obt[0].x = 1;
+        obt[2001].y = N;
+        obt[2001].x = M;
+        
+		// 장애물 위치 입력
+		for(int i = 1; i < K+1; i++)
+		   cin >> obt[i].y >> obt[i].x;
+		
+		// 문제의 조건은 4초 이내라 정렬까지 할 필요는 없지만, 정렬하면 좀 더 빨라진다.
+		sort(obt+1, obt+K, compare);
+		
+		// 장애물을 피해 obt[0]부터 end point까지 이동하는 경우의 수
+		ret = solve(0);
+		   
+		// Print the answer to standard output(screen).
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}
+
+// x^n을 빠르게 구하는 함수(divide & conquer)
+/*
+long long get_exp(long long x, long long n)
+{
+    if (n == 1) return x;
+    if (n == 0) return 1;
+    
+    long long val = get_exp(x, n/2);
+    long long ret = ( (val % MOD) * (val % MOD) ) % MOD;
+    
+    if( n % 2 == 0) return ret;
+    else return (x * ret) % MOD;
+}
+*/
+// 시프트연산을 사용하면 위 함수보다 조금 더 빠름.
+long long get_exp(long long x, long long n)
+{
+	if (n==0) return 1;
+	long long ret = get_exp(x, n >> 1);
+	ret = (ret * ret)%MOD;
+	if (n & 1) ret = (ret * x) % MOD;
+	return ret;
+}
+
+// (N+M-2)! / { (N-1)! * (M-1)! } = (N+M-2)! * { (N-1)! * (M-1)! } ^(p-2) (mod p) 에 대해 합동!
+long long comb(data str, data end)
+{
+    int n = end.y - str.y;
+    int m = end.x - str.x;
+    
+	//long long x = ( (fac[n] % MOD) * (fac[m] % MOD) ) % MOD;
+    //return ( (fac[n+m] % MOD) * (get_exp(x, MOD-2) % MOD) ) % MOD;
+    return (((fac[n+m] * fac_inv[n]) % MOD) * fac_inv[m]) % MOD;
+}
+
+long long solve(int cur)
+{
+	long long &ret = cache[cur];
+	if(ret != -1) return ret;
+	
+	data str = {obt[cur].y, obt[cur].x};
+	data end = {N, M};
+	// change to dp input
+	long long val = comb(str, end);
+	
+    long long sum = 0;
+    for(int i = 1; i < K+1; i++)
+    {
+        // 장애물 리스트 중 자기자신은 제외한다.
+        // str과 mid가 만드는 네모 범위 안에 존재하는 장애물만 카운트해야한다.
+        if( str.y == obt[i].y && str.x == obt[i].x ) continue;
+        if( (str.y <= obt[i].y && obt[i].y <= end.y) && (str.x <= obt[i].x && obt[i].x <= end.x) )
+            sum = (sum + (comb(str, obt[i])*solve(i) )% MOD ) % MOD;
+    }
+    
+    //return ret = ( (val%MOD) - (sum %MOD) ) % MOD;
+    return ret = ( val - sum + MOD ) % MOD;    // 마이너스 연산시 나머지에 음수가 나올 수 있기 때문에 +MOD를 해준다.
+}

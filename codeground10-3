@@ -1,0 +1,119 @@
+#include <iostream>
+
+using namespace std;
+
+// variables
+int N, M, K;
+
+struct data {
+    int y;
+    int x;
+    bool visit;
+};
+
+data obt[2000];    // 장애물은 2000개
+
+const long long MOD = 1000000007;
+long long fact[199999];    // 최대 fact[N+M-2]까지 묻는다. 200000-2+1...
+
+
+// function
+
+// x^n을 빠르게 구하는 함수
+long long get_exp(long long x, int n)
+{
+    //n이 0일 경우 1 리턴
+    if(n == 0)
+        return 1;
+        
+    long long val = get_exp(x, n/2);
+    val = (val * val) % MOD;
+    
+    // n이 짝수일 경우
+    if(n%2 == 0)
+        return val;
+    else
+        return (x*val) % MOD;
+}
+
+// str부터 end까지 가는 경우의 수를 구하는 함수.
+long long comb(data str, data end)
+{
+	//cout << "str.y : " << str.y << ", " << "str.x : " << str.x << endl;
+	//cout << "end.y : " << end.y << ", " << "end.x : " << end.x << endl;
+    int n = end.y - str.y;
+    int m = end.x - str.x;
+    //cout << "n : " << n << ", " << "m : " << m << endl;
+    
+    // (n+m)!/(n!*m!)을 구한다.
+    // 페르마의 소정리를 이용하여 (n+m)!*(n!*m!)^(p-2) (mod p)를 구한다.
+    long long x = (fact[n]*fact[m]) % MOD;
+    //cout << x << endl;
+    long long fact_inv = get_exp(x, MOD-2);
+    return (fact[n+m]*fact_inv) % MOD;
+}
+
+// 장애물을 피해 str부터 end까지 가는 경우의 수를 구하는 함수.
+long long path(data str, data end)
+{
+	//cout << str.y << ", " << str.x << endl;
+	//cout << end.y << ", " << end.x << endl;
+	
+    // path(i, j) = comb(i, j) - sum(path(i, mid)*path(mid, j))
+    long long ret = 0;
+    long long val = comb(str, end);
+    //cout << "comb(str, end) : " << val << endl;
+    long long sum = 0;
+    
+    for(int i = 0; i < K; i++) {
+        data mid = {obt[i].y, obt[i].x};
+        //cout << "obt[i].y : " << obt[i].y << ", " << "obt[i].x : " << obt[i].x << endl;
+        // 장애물의 범위가 str, end 위치에 포함될 때만 장애물로 계산!
+        if( (str.y == obt[i].y && str.x == obt[i].x) || (end.y == obt[i].y && end.x == obt[i].x) )
+            continue;
+        if( !obt[i].visit && (str.y <= obt[i].y && obt[i].y <= end.y) && (str.x <= obt[i].x && obt[i].x <= end.x) ) {
+            sum = (sum + (path(str, mid)*path(mid, end)) % MOD) % MOD;
+            obt[i].visit = true;
+        }
+        
+    }
+    //cout << "sum :" << sum << endl;
+    
+    ret = (val - sum + MOD) % MOD;    // 음수가 될 수 있으므로 MOD로 더해준 후 나눈다.
+    
+    cout << "path({" << str.y << ", " << str.x << "}, {" << end.y << ", " << end.x << "}) = " << ret << endl;
+    return ret;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;cin >> T;
+	
+	// init fact
+	fact[0] = 1;
+	for(int i = 1; i < 199999; i++){
+	    fact[i] = (i*fact[i-1]) % MOD;
+	    //cout << "fact : " << fact[i] << endl;
+	}
+	
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // input
+	    cin >> N >> M >> K;
+	    for(int i = 0; i < K; i++) {
+	        cin >> obt[i].y >> obt[i].x;
+            obt[i].visit = false;
+    }
+		long long ret = 0;
+		data str = {1, 1};
+		data end = {N, M};
+		
+		// 장애물을 피해 str부터 end까지 가는 경우의 수를 구하는 함수.
+		ret = path(str, end);
+		
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

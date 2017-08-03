@@ -1,0 +1,118 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+// variables
+const long long MOD = 1000000007;
+int N, M, K;
+
+long long fact[199999];    // fact[N+M-2] = fact[200000-2]까지 물어볼 수 있음.
+
+// 장애물의 위치를 기록할 data structure
+struct data {
+    int y;
+    int x; 
+};
+
+data obstacle[2002];
+
+// function
+
+//x^n을 계산하는 함수
+long long square(long long x, int n)
+{
+    // n=1일 경우 x리턴
+    if(n == 1)
+        return x;
+        
+    long long val = square(x, n/2);
+    val = (val * val) % MOD;
+    
+    // 짝수일 경우
+    if(n%2 == 0)
+        return val;
+    // 홀수일 경우
+    else
+        return (x * val) % MOD;
+}
+
+// nCk를 계산하는 함수
+long long path(int n, int k)
+{
+    // n!/(n-k)!k!
+    // a^(p-2) = 1/a (mod p) 성질 이용 : 페르마의 소정리
+    // n!*{(n-k)!k!}^(p-2)를 구한다.
+    long long val = (fact[n-k]*fact[k]) % MOD;
+    return (fact[n] * square(val, MOD-2)) % MOD;
+}
+
+long long chessGame(data strt, data end)
+{
+    int n = end.y - strt.y;
+    int m = end.x - strt.x;
+    
+    // strt, end 사이에 존재하는 장애물을 거쳐가는 경우의 수를 합산함.
+    long long sum = 0;
+    for(int i = 1; i <= K; i++){
+        int y = obstacle[i].y;
+        int x = obstacle[i].x;
+        // 외부로 넘어가는 장애물은 여기서 제외됨.
+        if( (strt.y < y && y < end.y) && (strt.x < x && x < end.x) ){
+            sum = (sum + (chessGame(strt, obstacle[i]) * chessGame(obstacle[i], end)) % MOD) % MOD;
+        }
+    }
+    
+    // 뺄셈에 대한 MOD연산 수행해야 함.
+    return (path(n, m) - sum) % MOD;
+}
+
+
+// order
+bool ord(data a, data b)
+{
+	return (a.x < b.x)
+}
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	// init_fact
+	fact[0] = 1;
+	for(int i = 1; i < 199999; i++){
+	    fact[i] = (i * fact[i-1]) % MOD;
+	}
+	
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // input
+	    cin >> N >> M >> K;
+	    
+	    for(int i = 1; i <= K; i++){
+	        // (1, 1), (N, M)에는 장애물이 없음이 보장됨.
+	        // N X M 범위를 벗어나는 장애물도 존재할 수 있음.
+	        cin >> obstacle[i].y >> obstacle[i].x;
+	    }
+	    
+	    sort(obstacle+1, obstacle+1+K, ord);
+	    
+	    // out of range인 장애물은 알고리즘 판단에서 제외한다.
+		long long ret = 0;
+		// ret = (1, 1)에서 (N, M)까지 가는 경우의 수(...a) - K개의 장애물을 거쳐서 가는 경우의 수(...b)
+		// a = (N+M-2)!/{(N-1)*(M-2)}
+		// b = 
+		obstacle[0].y = 1;
+		obstacle[0].x = 1;
+		obstacle[2001].y = N;
+		obstacle[2001].x = M;
+		
+		ret = chessGame(obstacle[0], obstacle[2001]);
+		
+		
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

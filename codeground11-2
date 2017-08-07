@@ -1,0 +1,57 @@
+#include <iostream>
+
+using namespace std;
+
+// variables
+int N, K;
+long long a[1000001];
+
+int frog()
+{
+    int cur = a[0];
+    int ret = 0;
+    // 현재 위치에서 최대 거리로 점프
+    for(int i = 1; i <= N; i++) {
+        // 도달할 수 없는 순간 cur = a[i-1]이 된다.
+        if(cur+K < a[i]) {
+            int target = a[i-1];
+            // 점프할 수 없는 경우!
+            if(cur == target)
+                return -1;
+            else {
+                cur = target;
+                i--;    // 현재위치를 업데이트한 후 다시 비교해야함.
+                ret++;    // 점프 횟수 증가
+            }
+        }
+    }
+    
+    // 마지막에 하는 점프는 위 로직으로 더해지지 않음.
+    ret = ret + 1;
+    return ret;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    cin >> N;
+	    
+	    // 처음 위치
+        a[0] = 0;
+	    for(int i = 1; i <= N; i++)
+	        cin >> a[i];
+	    
+	    cin >> K;    // 점프 가능한 거리
+	    
+	    int ret = 0;
+	    
+	    ret = frog();
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

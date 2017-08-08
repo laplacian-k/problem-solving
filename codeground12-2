@@ -1,0 +1,125 @@
+#include <iostream>
+#include <string>    // for string
+
+using namespace std;
+
+// variables
+int N;
+char room[1000][1000];
+bool visit[1000][1000];    // 이 방에 도착했었는지 여부를 기록.
+
+struct data {
+    int y, x;
+};
+
+data move(data cur, data priv)
+{
+    // 이전 방으로부터 현재 방으로 빛이 들어온 방향을 구함.
+    int y_diff = cur.y - priv.y;
+    int x_diff = cur.x - priv.x;
+    
+    // 빛이 들어온 방향 계산
+    string light = "";
+    // y방향으로 증가했으면 up
+    if(y_diff > 0)
+        light = "up";
+    // y방향으로 감소했으면 down
+    else if(y_diff < 0)
+        light = "down";
+    // x방향으로 증가했으면 left
+    else if(x_diff > 0) {
+        light = "left";
+    }
+    // x방향으로 감소했으면 right
+    else if(x_diff < 0) {
+        light = "right";
+    }
+    // 이외의 경우는 에러
+    else {
+        light = "error";
+    }
+    
+    // 거울의 형태를 이용해서 다음 방의 위치를 구함
+    // room_type(1 = /, 2 = \, 0 = 없음)
+    char room_type = room[cur.y][cur.x];
+    
+    data next = {-100, -100};
+    
+    // 거울이 없으면 들어온 방향으로 계속 이동.
+    if(room_type == '0') {
+        if(light == "up") next = {cur.y+1, cur.x};
+        if(light == "down") next = {cur.y-1, cur.x};
+        if(light == "left") next = {cur.y, cur.x+1};
+        if(light == "right") next = {cur.y, cur.x-1};
+    }
+    // 1번 거울
+    else if (room_type == '1') {
+        if(light == "up") next = {cur.y, cur.x-1};
+        if(light == "down") next = {cur.y, cur.x+1};
+        if(light == "left") next = {cur.y-1, cur.x};
+        if(light == "right") next = {cur.y+1, cur.x};
+    }
+    else if (room_type == '2') {
+        if(light == "up") next = {cur.y, cur.x+1};
+        if(light == "down") next = {cur.y, cur.x-1};
+        if(light == "left") next = {cur.y+1, cur.x};
+        if(light == "right") next = {cur.y-1, cur.x};
+    }
+    
+    return next;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // init
+	    for(int i = 0; i < 1000; i++)
+	        for(int j = 0; j < 1000; j++)
+	            visit[i][j] = false;
+	    // input
+        cin >> N;
+        // N개의 문자열이 주어짐.
+        for(int i = 0; i < N; i++) {
+            // 들어오는 라인마다 파싱해서 room의 형태를 바로 만듦.
+            // room_type(1 = /, 2 = \, 0 = 없음)
+            string room_type;
+            cin >> room_type;
+            for(int j = 0; j < N; j++) {
+                room[i][j] = room_type[j];
+            }
+        }
+		
+		
+		// 빛이 들어오는 방향 상하좌우
+		// room_type에 따라 다음에 도달하는 방의 위치가 다름.
+		// 다음 방의 위치가 N*N을 벗어나면 끝남.
+		data cur = {0, 0};
+		data priv = {0, -1};
+		visit[0][0] = (room[0][0] != '0' )? true : false;
+		
+		for( ; ; ) {
+		    data next = move(cur, priv);
+		    if(!( (0 <= next.y && next.y < N) && (0 <= next.x && next.x < N) ) )
+		        break;
+		    
+		    if(room[next.y][next.x] != '0')
+		        visit[next.y][next.x] = true;
+		    priv = cur;
+		    cur = next;
+		}
+		
+		int ret = 0;
+		for(int i = 0; i < N; i++)
+		    for(int j = 0; j < N; j++)
+		        if(visit[i][j])
+		            ret++;
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

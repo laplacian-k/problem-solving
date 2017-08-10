@@ -1,0 +1,59 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+ 
+int N;
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+        cin >> N;
+        
+        // N = a (1+b+b^2+...+b^n-1)
+		
+		// n = 1일경우 N을 b진법으로 나타내면 a...(b)이다. 따라서 b > N, ret = N+1
+		// (b = N이면 N을 N진법으로 나타낸다는 의미이고 10...(b)의 형태로 n = 2여야 한다.)
+		
+		int ret = N+1;
+		
+		// n = 2인 경우 N = a(1+b) 따라서b = N/a - 1
+		// a*a < a(1+b) = N ... a의 범위를 줄일 수 있다.
+		// N%a == 0, N/a-1 =b > a
+		for(int a = 1; a*a <= N; a++)
+		{
+		    if(N%a == 0 && N/a-1 > a) ret = min(ret, N/a -1);    // a가 최대일 때 b는 최소
+		}
+		
+		// n >= 3일때
+		// N = a(1+b+b^2+...+b^n-1)에서 a = 1 n = 3일때 b가 최대
+		// N = 1+b+b^2 > b^2
+		// N%sum == 0, N/sum = a < b
+		for(int b = 2; b*b <= N; b++)
+		{
+		    // b가 커지면서 sum은 int 범위를 벗어날 수 있다.
+		    long long sum = 1+b+b*b;    // sum 초기값
+		    long long val = b*b;
+		    
+		    for(;;)
+		    {
+		        // 모든 sum에 대해 최소값을 구한다.
+		        if(N%sum == 0 && N/sum < b) ret = min(ret, b);
+		        // N을 넘어설 경우 break;
+		        if(sum + val*b > N) break;
+		        // next Sum을 만듦.
+		        val = val*b;
+		        sum += val;
+		        
+		    }
+		    
+		}
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+ 
+	return 0;//Your program should return 0 on normal termination.
+}

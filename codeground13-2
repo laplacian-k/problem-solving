@@ -15,13 +15,14 @@ bool makeUniform(int b)
     // 1의 결과가 0이면 균일수가 될 수 없음. N != 0
     if(fir == 0)
         return false;
-        
+  
     // N%fir가 0이면 균일수 N=fir*(1+b+b^2+...)
-    if(N%fir == 0)
-        return true;
-    else
-        return false;
-        
+    //if(N != 1 && N%fir == 0)
+    //    return true;
+    //else
+    //    return false;
+    // fir로 나눠 떨어질뿐만 아니라 fir로 나눠질때 N/fir가 1+b+...+b^n-1꼴로 표현이 되야 함!
+         
     int base = b;
     int sum = fir;
     for( ; ; ) {

@@ -1,0 +1,94 @@
+#include <iostream>
+#include <algorithm>    // for min
+
+using namespace std;
+int N;
+
+bool makeUniform(int b)
+{
+    // 1. 모듈러 연산을 한번만해서 b진법의 첫째 자리 수를 구한다. (b^0에 위치하는 수)
+    // 2. 가능한 최대 자리까지 1에서 구한 수를 사용해서 숫자를 만든다.
+    // 3. N과 2번에서 만든 수를 비교한다.
+    // 더 빠르게 하려면 ? 균일수 계산의 형태는 fir*(1+b+b^2+...)
+    
+    int fir = N%b;
+    
+    // 1의 결과가 0이면 균일수가 될 수 없음. N != 0
+    if(fir == 0)
+        return false;
+        
+    // N%fir가 0이면 균일수 N=fir*(1+b+b^2+...)
+    //if(N != 1 && N%fir == 0)
+    //    return true;
+    //else
+    //    return false;
+    // fir로 나눠 떨어질뿐만 아니라 fir로 나눠질때 N/fir가 1+b+...+b^n-1꼴로 표현이 되야 함!
+        
+    // int형(32bit) 연산보다 long long(64bit) 연산이 더 빠르다!
+    // 32비트 이하의 정수형 데이터는 연산속도가 사실상 같습니다.
+    // 32비트보다 작은 데이터는, 일단 32비트 가져와서 나머지는 다 버리는 식으로 다룹니다.
+    // 64비트 데이터가 가장 빠른 이유는 64비트 데이터 처리를 위한 여러 종류의 하드웨어 최적화 때문입니다.
+    // 64비트 통으로 다 쓰는게 가장 빠릅니다.
+    // http://www.kpug.kr/kpugfreeboard/2172812
+    
+    long long base = b;
+    long long sum = fir;
+    for( ; ; ) {
+        sum += base*fir;
+        
+        // 균일수임을 발견한다면
+        if(N == sum)
+            return true;
+        // 균일수가 될 수 없음.
+        if(N < sum)
+            return false;
+            
+        base *= b;
+    }
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // input
+	    cin >> N;
+	    
+	    int ret = N+1;    // 문제정의에 따라 자연수 N이 균일수가 되는 최소의 양수 b의 최대값은 N+1임.
+	    
+	    // 기저를 최소부터 늘려가면서 가장 최소의 기저를 찾음
+	    // 자연수 N < 기저 b일 경우 b진법으로 1자리수가 되는데 이때에도 균일수로 판단한다.
+	    // b는 2이상의 양의 정수!
+	    // O(N)에 대해 N이 10^9이므로 time limit 가능성 존재.
+	    // 이분탐색 불가.
+	    
+	    // 균일수 N = a*(1+b+b^2+...+b^n-1)로 표현 가능! (n>=2)
+	    // n>=3일 경우 a=1, n=3일 때 b가 최대이다.(나올 수 있는 b의 최대값) 따라서 N = 1+b+b^2을 만족할 때 b가 최대.
+	    // b(b+1) = N-1을 만족할 때 b가 최대
+	    // 따라서 max_b*max_b < max_b(max_b+1) = N-1, b^2의 최대값은 N-1보다 작다.
+	    for(int b = 2; b*b < N-1; b++) {
+	        // 균일수로 판단이 가능하면 정답 발생.
+	        if(makeUniform(b)) {
+	            ret = b;
+	            break;
+	        }
+	            
+	    }
+	    
+	    // n = 2일 경우 N = a*(1+b)
+	    // a*a < a*(1+b) = N  (a < b 이기 때문)
+	    for(int a = 1; a*a < N; a++) {
+	        if(N%a == 0)
+	            ret = min(ret, N/a-1);
+	    }
+	    
+	    
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

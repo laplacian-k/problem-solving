@@ -23,6 +23,7 @@ void solve(int cur)
 		}
 	}
 	visit[to] = true;
+	fee[to] = true;
 	solve(to);
 	visit[to] = false;
 }

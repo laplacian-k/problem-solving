@@ -28,6 +28,36 @@ int main(int argc, char** argv)
             path[from][to] = weight;
         }
         
+        // algorithm
+        // must be recursion...
+        /*
+        for(int i = 1; i <= N; i++){
+        	// init visit
+        	for(int k = 1; k <= N; k++)
+        		visit[k] = false;
+        	visit[i] = true;
+        	
+        	// starting node is not marked
+        	int cur_weight = 1000000000;
+        	int next = -1;
+        	for(int j = 1; j <= N; j++) {
+        		if(i == j || path[i][j] == -1 || visit[j])
+        			continue;
+        		
+        		// min weight is selected
+        		if(cur_weight > path[i][j]){
+        			cur_weight = path[i][j];
+        			next = j;
+        		}
+        		
+        	}
+        	// middle node must have a fee.
+        	fee[next] = true;
+        	// visit marking
+        	visit[next] = true;
+        	
+        }
+        */
 		
 		cout << "Case #" << test_case+1 << endl;
 		

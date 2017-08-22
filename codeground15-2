@@ -1,0 +1,120 @@
+#include <iostream>
+#include <string>   // for string, to_string(C++11)
+using namespace std;
+
+// variables
+int N, M;
+bool fee[1001];
+bool visit[1001];
+bool ret[1001];
+int path[1001][1001];
+
+int base;
+
+void solve(int cur, int target, int weight)
+{
+    // arrive
+    if(cur == target) {
+        if(base > weight) {
+            // fee집합을 새롭게 update
+            for(int i = 1; i <= N; i++)
+                if(visit[i])
+                    fee[i] = true;
+                else
+                    fee[i] = false;
+                    
+            base = weight;
+        }
+        else if(base == weight) {
+            // 현재까지의 집합 + 추가로 update
+            for(int i = 1; i <= N; i++)
+                if(visit[i])
+                    fee[i] = true;
+            
+            // base 유지
+        }
+        
+        return;
+    }
+        
+	
+	for(int next = 1; next <= N; next++){
+		if(cur == next || path[cur][next] == -1 || visit[next])
+			continue;
+			
+		visit[next] = true;
+		solve(next, target, weight+path[cur][next]);
+		visit[next] = false;
+	}
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+		// init
+		for(int i = 0; i <= 1000; i++)
+			for(int j = 0; j <=1000; j++)
+				path[i][j] = -1;
+		
+		for(int i = 0; i <= 1000; i++){
+		    visit[i] = false;
+		    fee[i] = false;
+		    ret[i] = false;
+		}
+		
+		// input
+        cin >> N >> M;
+        for(int i = 0; i < M; i++) {
+            int from, to, weight;
+            cin >> from >> to >> weight;
+            path[from][to] = weight;
+            path[to][from] = weight;
+        }
+        
+        // algorithm
+        // must be recursion...
+        for(int str = 1; str <= N; str++){
+            for(int end = str+1; end <= N; end++){
+                if(str != end) {
+                    base = 1000000000;
+                    
+                    visit[str] = true;
+                    
+                    solve(str, end, 0);
+                    
+                    visit[str] = false;
+                    
+                    
+                    for(int i = 1; i <= N; i++){
+                    	fee[str] = fee[end] = false;
+                        
+                        if(fee[i])
+                            ret[i] = true;
+                    }
+                }
+            }
+        }
+        
+		
+		cout << "Case #" << test_case+1 << endl;
+		
+		int cnt = 0;
+		string univ = "";
+		for(int i = 1; i <= N; i++ ) {
+		    if(!ret[i]) {
+		        cnt++;
+		        univ = univ + to_string(i) + " ";
+		    }
+		}
+		if(cnt == 0)
+		    cout << cnt << endl;
+		else
+		    cout << cnt << " " << univ << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

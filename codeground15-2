@@ -1,3 +1,8 @@
+// 다익스트라 알고리즘을 통해 (그냥 구현하든, 우선순위 큐로 구현하든)
+// 너비우선탐색, str->나머지 간선에 대해 가장 짧은 dist만 배열에 저장.
+// fee는 어떻게 계산할 것인가?
+// dist[v]가 갱신될 때마다 중간경로에 대한 fee집합을 갱신해줘야 함.
+
 #include <iostream>
 #include <string>   // for string, to_string(C++11)
 using namespace std;
@@ -13,6 +18,8 @@ int base;
 
 void solve(int cur, int target, int weight)
 {
+    if(base < weight)
+        return;
     // arrive
     if(cur == target) {
         if(base > weight) {
@@ -77,6 +84,8 @@ int main(int argc, char** argv)
         
         // algorithm
         // must be recursion...
+        // target을만날때까지오랜시간이걸릴수있음 깊이우선탐색의단점
+        // depth bound is unuseless
         for(int str = 1; str <= N; str++){
             for(int end = str+1; end <= N; end++){
                 if(str != end) {
@@ -88,10 +97,8 @@ int main(int argc, char** argv)
                     
                     visit[str] = false;
                     
-                    
+                    fee[str] = fee[end] = false;
                     for(int i = 1; i <= N; i++){
-                    	fee[str] = fee[end] = false;
-                        
                         if(fee[i])
                             ret[i] = true;
                     }

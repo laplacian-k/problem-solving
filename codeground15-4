@@ -1,0 +1,122 @@
+#include <iostream>
+#include <queue>    // for priority queue
+#include <vector>
+using namespace std;
+
+int N, M;
+//int w[1001][1001];
+struct Edge {
+    int to, cost;
+    Edge(int to, int cost) : to(to), cost(cost) {}  // 구조체 초기화 구문
+};
+
+vector<Edge> w[1001];   // 간선을 벡터화 하지 않으면 1000*1000의 쓸데없는 탐색이 발생하여 225점만 맞음.
+int dist[1001];
+bool visit[1001];
+bool ret[1001];
+
+const int inf = 1000000000;
+
+void dijkstra(int fir)
+{
+    // dist, visit 초기화
+    for(int i = 1; i <= N; i++) {
+        dist[i] = inf;
+        visit[i] = false;
+    }
+    //visit[fir] = true;
+    dist[fir] = 0;
+    
+    // cur을 기준으로 우선순위큐에 push하는 작업을 시작함.
+    priority_queue<pair<int, int> > p;
+    // (weight, vertex)
+    p.push(make_pair(0, fir));
+    while(!p.empty()) {
+        pair<int, int> q = p.top();
+        int cur = q.second;
+        // 방문했음을 표시
+        p.pop();
+        if(visit[cur])
+            continue;
+        visit[cur] = true;
+        
+        for(int next = 0; next < w[cur].size(); next++) {
+           int y = w[cur][next].to;
+           if(dist[y] > dist[cur] + w[cur][next].cost) {
+               dist[y] = dist[cur] + w[cur][next].cost;
+               p.push(make_pair(-dist[y], y));   // weight가 작은 원소를 우선으로 하기 위해 -를 해줌.
+           }
+       }
+    }
+    // 최단거리를 모두 구하고나서 fee를 낼 수 있는 vertex를 찾는다.
+    for(int i = 1; i <= N; i++){
+        if(fir == i)
+            continue;
+        for(int j = 0; j < w[i].size(); j++) {
+            // fir to j의 weight가 fir to i + w[i][j]일 경우 fee를 낼 수 있다고 판단!
+            int cur = i;
+            int next = w[i][j].to;
+            int wg = w[i][j].cost;
+            if(dist[next] == dist[cur] + wg)
+                ret[cur] = false;
+            
+        }
+    }
+}
+
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // init
+	    //for(int i = 0; i <= 1000; i++) {
+	    //    for(int j = 0; j <= 1000; j++){
+	    //        w[i][j] = -1;
+	    //        ret[j] = true;
+	    //    }
+	    //}
+	    for(int i = 1; i <= 1000; i++) {
+	        w[i].clear();
+	        ret[i] = true;
+	    }
+	    
+	    // input
+        cin >> N >> M;
+        for(int i = 0; i < M; i++) {
+            int from, to, weight;
+            cin >> from >> to >> weight;
+            //w[from][to] = weight;
+            //w[to][from] = weight;
+            w[from].push_back(Edge(to, weight));
+            w[to].push_back(Edge(from, weight));
+        }
+        
+        // dijkstra algorithm
+        // 모든 vertex-vertex에 대해 최단거리를 구한다.
+        for(int i = 1; i <= N; i++){
+            dijkstra(i);
+        }
+		cout << "Case #" << test_case+1 << endl;
+		
+		int cnt = 0;
+		for(int i = 1; i <= N; i++){
+		    if(ret[i])
+		        cnt++;
+		}
+		
+		cout << cnt <<" ";
+		if(cnt != 0) {
+		    for(int i = 1; i <= N; i++) {
+		        if(ret[i])
+		            cout << i << " ";
+		    }
+		}
+		cout << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

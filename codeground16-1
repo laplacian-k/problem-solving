@@ -1,0 +1,57 @@
+#include <iostream>
+#include <algorithm>    // for min
+
+using namespace std;
+
+// variables
+int M;
+long long b[100001];
+const long long inf = 10000000000000;
+
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+        long long diff = inf;
+		cin >> M;
+		bool isEqual = true;
+		for(int i = 1; i <= M; i++) {
+		    cin >> b[i];
+		    if(i == 1)
+		        continue;
+		    diff = min(diff, b[i]-b[i-1]);
+		    // d = 0에 대한 판단.
+		    if(b[i] != b[i-1])
+		        isEqual = false;
+		}
+		
+		long long ret = 0;
+		// algorithm
+		for(long long d = 1; d <= diff; d++) {
+		    // b[m]-b[1] = (k-1)*d -> b[m]-b[1]은 d의 배수여야 함.
+		    bool canCount = true;
+		    for(int m = 1; m <= M; m++) {
+		        long long base = b[m]-b[1];
+		        if(base%d != 0) {
+		            canCount = false;
+		            break;
+		        }
+		    }
+		    if(canCount)
+		        ret++;
+		}
+		
+		// d = 0에 대한 판단.
+		if(isEqual)
+		    ret++;
+		
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

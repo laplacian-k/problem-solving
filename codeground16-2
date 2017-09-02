@@ -1,0 +1,76 @@
+#include <iostream>
+#include <algorithm>    // for min
+#include <cmath>    // for sqrt
+
+using namespace std;
+
+// variables
+int M;
+long long b[100001];
+const long long inf = 10000000000000;
+
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+        long long diff = inf;
+        
+        // input
+		cin >> M;
+		bool isEqual = true;
+		for(int i = 1; i <= M; i++) {
+		    cin >> b[i];
+		    if(i == 1)
+		        continue;
+		    // 수열 b의 최대 공차를 구하기 위해 min(diff)를 구한다.
+		    diff = min(diff, b[i]-b[i-1]);
+		    // d = 0에 대한 판단.
+		    if(b[i] != b[i-1])
+		        isEqual = false;
+		}
+		
+		long long ret = 0;
+		bool canCount = true;
+		
+		// algorithm
+		for(long long d = 1; d*d <= diff; d++) {
+		    // b[m]-b[1] = (k-1)*d -> b[m]-b[1]은 d의 배수여야 함.
+		    canCount = true;
+		    for(int m = 1; m <= M; m++) {
+		        long long base = b[m]-b[1];
+		        // d로 나눠지지 않으면 공차가 아니다.
+		        if(base%d != 0) {
+		            canCount = false;
+		            break;
+		        }
+		    }
+		    // 모든 수열 b에 대해 만족할 경우만 센다.
+		    if(canCount)
+		        ret++;
+		}
+		
+		
+		// d = 0에 대한 판단. 모든 수열이 같다면 d = 0에 대해서만 만족하기 때문에 답은 1이다.
+		if(isEqual)
+		    ret = 1;
+		else {
+		    // d의 범위를 루트diff로 한정해 두었기 때문에 2를 곱해준다.
+		    // b[m]-b[1] = (k-1)*d 꼴에서 k-1과 d는 모두 정수이기 때문에 순서쌍 (x, y)로 표현 가능.
+		    // 이때 root(diff)까지만 본다는 건 중복 연산을 줄이기 위해서임. (1, 10) = (10, 1)
+		    // 만약 diff가 100일 경우 root(diff) = 10 이기 때문에 d = 10을 계산할 것이고, 이 d가 공차일 시 2*ret는 정답보다 +1 큰 값이 된다.
+		    ret = 2*ret;
+		    double root = sqrt(diff);
+		    if(root*root == diff && canCount)
+		        ret = ret -1;
+		}
+		    
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

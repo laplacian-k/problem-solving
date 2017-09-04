@@ -1,0 +1,64 @@
+#include <iostream>
+
+using namespace std;
+
+// variables
+const int MOD = 1000000007;
+int N, M;
+long long fact[2000003];
+
+long long square(long long x, int n)
+{
+    // x^n을 빠르게 구하는 함수.
+    if(n == 1)
+        return x;
+    if(n == 0)
+        return 1;
+    long long val = square(x, n/2);    
+    val = (val * val) % MOD;
+    // n이 짝수라면
+    if(n%2 == 0)
+        return val;
+    // n이 홀수라면
+    else
+        return (val * x) % MOD;
+}
+
+long long solve()
+{
+    // (M+N+2)! * {(N+1)!(M+1)!}^(MOD-2) -1 을 구하면 됨.
+    long long f = fact[M+N+2];
+    long long a = (fact[N+1] * fact[M+1]) % MOD;
+    long long f_inv = square(a, MOD-2);
+    
+    long long ret = (f * f_inv) % MOD;
+    ret = (ret + MOD - 1) % MOD;
+    return ret;
+}
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	// init
+	fact[0] = 1;
+	for(int i = 1; i <= 2000002; i++){
+	    fact[i] = (fact[i-1]*i) % MOD;
+	}
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // input
+	    cin >> N >> M;
+
+        // algorithm
+        // M+N+2CN+1 - 1 을 구하는 문제
+        // (M+N+2)! / (N+1)!(M+1)! - 1
+	    // (M+N+2)! * {(N+1)!(M+1)!}^(MOD-2) -1 을 구하면 됨.
+		long long ret = 0;
+		ret = solve();
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

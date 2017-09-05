@@ -1,0 +1,51 @@
+#include <iostream>
+
+using namespace std;
+
+// variables
+int N;
+int a[5001];
+bool s[400001];
+
+int main(int argc, char** argv)
+{
+	int T, test_case;cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // init
+	    for(int i = 0; i <= 400001; i++)
+	        s[i] = false;
+	    // input
+	    cin >> N;
+	    for(int i = 1; i <= N; i++)
+	        cin >> a[i];
+	    
+	    int ret = 0;
+	    
+	    // algorithm
+	    // 자신보다 앞에 있는 수 세개의 합으로 자기 자신을 나타낼 수 있으면 좋은 수
+        // N <= 5000이므로 O(N^2)이하가 되야한다.
+        // a[i] + a[j] = a[target] - a[k]
+        // a[i] + a[j]값에 대한 집합을 알고 있다면 k에 대해 N번만 탐색하여 a[target]-a[k]와 비교할 수 있다.
+
+	    for(int target = 1; target <= N; target++){
+	        // 계단식, 필요한 연산만 해야함.
+	        int i = target-1;
+	        for(int j = 1; j < target; j++){
+                s[a[i]+a[j]+200000] = true;
+            }
+	    
+	        for(int k = 1; k < target; k++) {
+	            if(s[a[target]-a[k]+200000]){
+	                ret++;
+	                break;
+	            }
+	        }
+	    }
+	   
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

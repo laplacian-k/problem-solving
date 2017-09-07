@@ -1,0 +1,92 @@
+#include <iostream>
+#include <algorithm>    // for min
+#include <cmath>    // for abs
+
+using namespace std;
+
+// variables
+int N;
+struct data{
+    int x1, y1, x2, y2;
+};
+
+data line[100];
+
+double dist(double x1, double y1, double x2, double y2) {
+    return max(abs(x1-x2), abs(y1-y2));
+}
+
+bool decision(double mid) {
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++){
+            // 왜 이렇게 둬야할까?
+            double xs[] = {line[i].x1, line[i].x2};
+            double ys[] = {line[j].y1, line[j].y2};
+            for(int l1 = 0; l1 < 2; l1++){
+                for(int l2 = 0; l2 <2; l2++){
+                    double x = xs[l1] + mid;
+                    double y = ys[l2] + mid;
+                    
+                    double d = 1000000000;    // 최대값 설정
+                    for(int k = 0; k < N; k++){
+                        d = min(d, dist(x, y, line[k].x1, line[k].y1));
+                        d = min(d, dist(x, y, line[k].x2, line[k].y2));
+                        
+                        if(d > mid)
+                            return false;
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    return true;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    cin >> N;
+	    for(int i = 0; i < N; i++)
+	       cin >> line[i].x1 >> line[i].y1 >> line[i].x2 >> line[i].y2;
+        
+        // 최대 전원거리가 최소가 되는 점을 찾는 문제
+        // 전체 좌표평면에서 brute-force로 탐색한다면 최대 10^16*100번의 연산 필요
+        // 최대 전원거리가 x이하가 되는 지점이 존재하는가?
+        // 답의 후보들은 두 직선으로 만들 수 있는 x, y 조합 + len
+        double ret = 0;
+		
+		// 이분탐색
+		// left와 right를 double로 두면 계산이 제대로 안될 가능성 존재
+		double left = 0;
+		double right = 100000000;
+		double mid = 0;
+		while(left <= right) {
+		    // mid 계산
+		    mid = (left+right)/2;
+		    // 왼쪽에 답이 있을 가능성이 있다면
+		    if(decision(mid))
+		        right = mid - 1;
+		    // 오른쪽에 답이 있을 가능성이 있다면
+		    else
+		        left = mid + 1;
+		}
+		
+		ret = mid;
+		
+		cout << "Case #" << test_case+1 << endl;
+		
+		// 실수면 소수점 출력 아니면 정수부만 출력
+		if(ret != (int)ret)
+		    cout << ret << endl;
+		else
+		    cout << (int)ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

@@ -1,0 +1,106 @@
+#include <iostream>
+#include <string.h>    // for memset
+using namespace std;
+
+// variables
+const long long MOD = 1000000007;
+int N, M, K;
+
+struct data {
+    int y, x;
+};
+
+data obt[2001];    // 장애물
+long long cache[2001];
+long long fact[200001];
+long long fact_inv[200001];
+
+// functions
+long long get_exp(long long x, long long n)
+{
+    if(n == 1)
+        return x;
+        
+    long long val = get_exp(x, n/2);
+    val = (val*val) % MOD;
+    // 짝수라면
+    if(n%2 == 0)
+        return val;
+    else
+        return (x * val) % MOD;
+}
+// a^(p-2) = 1/a (mod p) 페르마의 소정리 성질 이용!
+// (y+x)! * (y!x!)^(p-2) (mod p)
+long long comb(data str, data end)
+{
+    long y = end.y - str.y;
+    long x = end.x - str.x;
+    // (y+x)! / y!x!을 구하면 됨.
+    //long long val = (fact[y] * fact[x]) % MOD;
+    //long long fact_inv = get_exp(val, MOD-2);
+    long long f = fact[y+x];
+    long long f_inv = (fact_inv[y] * fact_inv[x]) % MOD;
+    return (f * f_inv) % MOD;
+}
+
+// path(str, end) = comb(str, end) - sigma comb(str, i)*path(i, end) (1 <= i <= k, i는 path(x, y)에서 x와 y를 제외한 내부 범위여야 함)
+long long path(int n)
+{
+    long long &ret = cache[n];
+    if(ret != -1)
+        return ret;
+        
+    data str = {obt[n].y, obt[n].x};
+    data end = {N, M};
+    
+    long long sum = 0;
+    for(int i = 1; i <= K; i++) {
+        // str, end에 위치한 장애물은 제외
+        if( (str.y == obt[i].y && str.x == obt[i].x) || (end.y == obt[i].y && end.x == obt[i].x) )
+            continue;
+        if( (str.y <= obt[i].y && obt[i].y <= end.y) && (str.x <= obt[i].x && obt[i].x <= end.x) ) {
+            data mid = {obt[i].y, obt[i].x};
+            sum = (sum + (comb(str, mid)*path(i)) % MOD ) % MOD;
+        }
+        
+    }
+    return ret = (comb(str, end) - sum + MOD) % MOD;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	cin >> T;
+	
+	// pre processing (calculate fact)
+	fact[0] = 1;
+	fact_inv[0] = 1;
+	for(int i = 1; i < 200001; i++) {
+	    fact[i] = (i*fact[i-1]) % MOD;
+	    fact_inv[i] = get_exp(fact[i], MOD-2);
+	}
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // init
+	    memset(cache, -1, sizeof(cache));
+        cin >> N >> M >> K;
+        for(int i = 1; i <= K; i++)
+            cin >> obt[i].y >> obt[i].x;
+            
+		long long ret = 0;
+		
+		// algorithm
+		// path(str, end) = str에서 end까지 k개의 장애물을 피해서 도착하는 방법의 수
+		// path(str, end) = comb(str, end) - 적어도 1개의 장애물을 거쳐서 end까지 도착하는 방법의 수
+		// path(str, end) = comb(str, end) - sigma comb(str, i)*path(i, end) (1 <= i <= k, i는 path(x, y)에서 x와 y의 내부 범위여야 함)
+		//data str = {1, 1};
+		//data end = {N, M};
+		obt[0] = {1, 1};
+		
+		ret = path(0);
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

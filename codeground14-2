@@ -1,0 +1,110 @@
+#include <iostream>
+#include <algorithm>    // for min
+#include <stdlib.h>    // for abs
+#include <cstdio>    // for printf
+using namespace std;
+
+// variables
+int N;
+struct data {
+    int x1, y1;
+    int x2, y2;
+};
+data line[100];
+
+// functions
+int dist(int x1, int y1, int x2, int y2)
+{
+    return max(abs(x2-x1), abs(y2-y1));
+}
+
+bool decision(int len)
+{
+    // 모든 조합을 만듦.
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < N; j++) {
+            int x[] = {line[i].x1, line[i].x2};
+            int y[] = {line[j].y1, line[j].y2};
+            for(int p = 0; p < 2; p++) {
+                for(int q = 0; q < 2; q++) {
+                    int dx = x[p] + len;
+                    int dy = y[q] + len;
+                    
+                    // 있냐 없냐만 판단해야 한다.
+                    // 하나라도 len 이하의 해답이 있으면 왼쪽을 탐색해야 하고
+                    // 전부 len 초과라면 오른쪽을 탐색해야 한다.
+                    bool ok = true;
+                    // 만든 점의 조합으로 각 선분에 도달하는 전원거리를 구한다.
+                    for(int k = 0; k < N; k++) {
+                        int d1 = dist(dx, dy, line[k].x1, line[k].y1);
+                        int d2 = dist(dx, dy, line[k].x2, line[k].y2);
+                        
+                        int d = min(d1, d2);
+                        
+                        if(d > len){
+                            ok = false;
+                            break;
+                        }
+                    }
+                    
+                    // 전부 len 이하라면 (어떤 해의 집합이 전부 len 이하인지를 검증한다!)
+                    if(ok)
+                        return true;
+                    // 하나라도 len보다 큰 해를 갖고 있다면 다음 조합을 만들어 탐색한다.
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    cin >> N;
+	    
+	    for(int i = 0; i < N; i++) {
+	        cin >> line[i].x1 >> line[i].y1 >> line[i].x2 >> line[i].y2;
+	        // 소수점 출력부 때문에 2를 곱한다.
+	        line[i].x1 *= 2;
+	        line[i].y1 *= 2;
+	        line[i].x2 *= 2;
+	        line[i].y2 *= 2;
+	    }
+	    
+	    // algorithm
+	    // 최적 문제를 결정문제로 바꿔 품
+	    // 정답의 범위 0 <= ret <= 10^8
+	    int left  = 0;
+	    int right = 100000000;
+	    int ret = right;
+	    
+	    while(left <= right) {
+	        int mid = (left + right) / 2;
+	        // 최대전원거리의 최소값이 mid 이하인 조합이 있는가?
+	        if(decision(mid)) {
+	             // 있다면 왼쪽으로 이동
+	             right = mid - 1;
+	             ret = min(ret, mid);    // 왜 최소값으로 구할까? 이동할 때마다 최소가 되는게 아닌가?
+	             
+	        }
+	        else {
+	            // 없다면 오른쪽으로 이동
+	            left = mid + 1;
+	        }
+	    }
+	    
+		cout << "Case #" << test_case+1 << endl;
+        if (ret%2 == 0) {
+            printf("%d\n",ret/2);
+        } else {
+            printf("%d.5\n",ret/2);
+        }
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

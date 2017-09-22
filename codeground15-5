@@ -1,0 +1,134 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+// variables
+int N, M;
+struct Edge {
+    int to;
+    int weight;
+    Edge(int to, int weight) : to(to), weight(weight) {}
+};
+
+vector<Edge> w[1001];
+bool fee[1001];
+int dist[1001];
+bool visit[1001];
+const int inf = 1000000000;
+
+// function
+void dijkstra(int base)
+{
+    	    
+    // (weight, univ) 형태
+    priority_queue<pair<int, int> > pq;
+    
+    // 방문 정보, dist 초기화
+    for(int i = 1; i <= N; i++) {
+        dist[i] = inf;    // 첫 탐색시에는 무조건 push(make_pair)하기 위함.
+        visit[i] = false;
+    }
+    // 첫노드를 위한 초기화
+    dist[base] = 0;
+    pq.push(make_pair(0, base));    // 가중치는 0부터 시작
+    
+    while(!pq.empty()) {
+        pair<int, int> top = pq.top();
+        int cur = top.second;
+        pq.pop();
+        // 방문했음을 표시
+        if(visit[cur])
+            continue;
+        visit[cur] = true;
+        // 현재 노드의 인접 리스트만 탐색.
+        for(int i = 0; i < w[cur].size(); i++) {
+            int wet = w[cur][i].weight;
+            int next = w[cur][i].to;
+            // 더 작은 경로를 발견했을 경우 dist를 갱신한다.
+            // dist[next] == dist[cur] + wet일 경우 pq에 추가하지 않는다!
+            if(dist[next] > dist[cur] + wet) {
+                dist[next] = dist[cur] + wet;    // i to next로의 최소거리가 계산되어 저장됨.
+                // ** dist[next]를 push한다. (w[cur][next].weight를 push하는게 아니다!)
+                pq.push(make_pair(-dist[next], next));    // 짧은 거리의 우선순위를 높이기 위해 음수값을 push
+            }
+            
+        }
+        
+    }
+    
+    // 최단거리를 모두 구하고나서 fee를 낼 수 있는 vertex를 찾는다.
+    for(int i = 1; i <= N; i++){
+        if(base == i)
+            continue;    // dist[base]는 어차피 0이다.
+        for(int j = 0; j < w[i].size(); j++) {
+            // fir to j의 weight가 fir to i + w[i][j]일 경우 fee를 낼 수 있다고 판단!
+            int cur = i;
+            int next = w[i][j].to;
+            int wg = w[i][j].weight;
+            if(dist[next] == dist[cur] + wg)
+                fee[cur] = true;    // dist[next] == dist[cur] + wg를 만족하는 값이 하나라도있다면 fee를 낼 수 있다고 판단.
+                // BFS 트리의 마지막 노드의 경우 위 수식을 만족할 수 없다.
+                // cur에서 next 경로로 갈 때 그 dist또한 최소 경로라면 base-cur-next로 이뤄진 최단 경로에 있다는 뜻이고, cur는 중간 경로가 되므로 fee를 낼 수 있다고 판단 가능하다!
+            
+        }
+    }
+    
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // init
+	    for(int i = 1; i <= 1000; i++) {
+	        w[i].clear();    // 초기화 하지 않으면 데이터가 꼬일 수 있음.
+	        fee[i] = false;
+	    }
+	    
+	    // input
+	    cin >> N >> M;
+	    for(int i = 0; i < M; i ++) {
+	        // from, to, weight
+	        int from, to, weight;
+	        cin >> from >> to >> weight;
+	        
+	        // 양방향으로 데이터를 넣음.
+	        w[from].push_back(Edge(to, weight));
+	        w[to].push_back(Edge(from, weight));
+	    }
+	    
+	    // algorithm
+	    // 최소의 거리만을 찾아가고, 경로상에 통행료를 낼 수 있다고 판단되는 대학들은 목록에서 제거한다.
+	    
+	    // N개의 대학에 대해 모두 탐색해 봄.
+	    for(int i = 1; i <=N; i++) {
+	        dijkstra(i);
+	    }
+	    
+	    int cnt = 0;
+	    for(int i = 1; i <= N; i++) {
+	        if(!fee[i]) cnt++;
+	    }
+	    
+		cout << "Case #" << test_case+1 << endl;
+		
+		// 대학 개수, 통행료를 받을 가능성이 없는 대학들을 출력
+		// 통행료를 받을 가능성이 없는 대학들이 없다면 숫자 0만 출력
+		cout << cnt << " ";
+		if(cnt != 0) {
+		    for(int i = 1; i <= N; i++) {
+		        if(!fee[i])
+		            cout << i << " ";
+		    }
+		}
+		
+		cout << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

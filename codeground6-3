@@ -1,0 +1,76 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// variables
+int N, M;
+long long last[200000];    // 2N-1 개의 대각선이 필요
+struct data {
+    int y, x;
+};
+
+// functions
+long long score(data cur)
+{
+    int y = cur.y;
+    int x = cur.x;
+    
+    long long ret = 0;
+    // 몇 번째 대각선인지 탐색
+    int k = y+x+1;
+    int base = last[k];
+    // 현재 좌표가 몇 번째 숫자인지 파악해서 현재 위치의 점수를 계산 
+    // 짝수 대각선은 좌하향으로 움직이고, 홀수 대각선은 우상향으로 움직임
+    // 위쪽 삼각형과 아래쪽 삼각형의 계산법이 다름.
+    if(k%2 == 0)
+        ret = (k <= N) ? base - x : base - (N-1-y);
+    else
+        ret = (k <= N) ? base - y : base - (N-1-x);
+    return ret;
+}
+
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // input
+	    cin >> N >> M;
+	    string path;
+	    cin >> path;
+	    
+	    // pre processing
+	    // 각 대각선의 끝 점수를 구해 놓음.
+	    last[0] = 0;
+	    for(int i = 1; i <= 2*N-1; i++) {
+	        if(i <= N)
+	            last[i] = last[i-1] + i;
+	        else
+	            last[i] = last[i-1] + 2*N-i;
+	    }
+	    
+	    // algorithm
+	    data cur = {0, 0};
+	    long long ret = 1;
+	    for(int i = 0; i < path.length(); i++) {
+	        if(path[i] == 'D')
+	            cur = {cur.y+1, cur.x};
+	        if(path[i] == 'R')
+	            cur = {cur.y, cur.x+1};
+	        if(path[i] == 'U')
+	            cur = {cur.y-1, cur.x};
+	        if(path[i] == 'L')
+	            cur = {cur.y, cur.x-1};
+	            
+	            ret += score(cur);
+	    }
+	    
+        
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

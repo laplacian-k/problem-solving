@@ -1,0 +1,74 @@
+#include <iostream>
+#include <algorithm>    // for max
+#include <math.h>    // for sqrt
+
+using namespace std;
+
+// variables
+int M;
+long long b[100001];
+const long long inf = 10000000000000;
+int main(int argc, char** argv)
+{
+	int T, test_case;
+	cin >> T;
+	for(test_case = 0; test_case  < T; test_case++)
+	{
+	    // input
+        cin >> M;
+        long long last = inf;
+        bool isAllEqual = true;    // 모든 수열의 크기가 같은지 탐색
+        bool isEqual = false;    // 크기가 같은 수열이 하나라도 존재하는지 탐색
+        for(int i = 1; i <= M; i++) {
+            cin >> b[i];
+            if(i == 1) continue;
+            last = min(last, b[i]-b[i-1]);    // d의 탐색 구간을 b 수열간 차이의 최소값으로 구해 놓는다.
+            if(b[i] != b[i-1]) isAllEqual = false;
+            if(b[i] == b[i-1]) isEqual = true;
+        }
+        
+        // algorithm
+        long long ret = 0;
+        // d = 0인 경우는 모든 수열이 동일할 경우이다.
+        // d = 0이 성립한다면 답은 1이다.
+        // 크기가 같은 수열이 있을 때 하나라도 크기가 다르다면 만족하는 d는 없다.
+        if(isEqual){
+            last = 0;    // 반복문을 돌지 않게 함.
+            if(isAllEqual) ret = 1;
+            else ret = 0;
+        }
+        
+        for(long long d = 1; d*d <= last; d++) {
+            
+            bool canDivide = true;
+            for(int k = 1; k <= M; k++) {
+                long long base = b[k]-b[1];
+                // 전부 d로 나누어 떨어진다면 가능한 공차의 개수를 더해나간다. 
+                if(base%d != 0) {
+                    canDivide = false;
+                    break;
+                }
+            }
+            
+            if(canDivide)
+                ret++;
+        }
+        
+        // 하나라도 동일한 수열이 있었다면 계산하지 않음.
+        if(!isEqual) {
+            ret = ret*2;
+            long long root = sqrt(last);
+            // sqrt(last)*sqrt(last) == last일 경우 (n-1), d의 순서쌍이 10, 10이 되므로 -1을 해준다. (중복으로 셈)
+            
+            if(root*root == last) {
+                ret = ret-1;
+            }
+        }
+        
+        
+		cout << "Case #" << test_case+1 << endl;
+		cout << ret << endl;
+	}
+
+	return 0;//Your program should return 0 on normal termination.
+}

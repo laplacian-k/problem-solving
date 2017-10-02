@@ -3,7 +3,7 @@
 using namespace std;
 
 // variables
-int N, M;
+int N, M;    // 문제에서 N <=4인데 예제에서는 (5,5)로 주는게 있음
 int board[4][500];
 
 struct data {

@@ -1,0 +1,163 @@
+#include <iostream>
+#include <set>
+using namespace std;
+
+// variables
+int N, M;
+int map[8][8];
+int temp[8][8];
+int safe = 0;
+// functions
+bool validation(int y, int x)
+{
+    if((0 <= y && y < N) && (0 <= x && x < M)) return true;
+    return false;
+}
+int virus(int y, int x)
+{
+	
+	// copy of map
+	for(int i = 0; i < N; i++) {
+		for(int j = 0; j < M; j++) {
+			temp[i][j] = map[i][j];	
+		}
+	}
+    int ny = 0;
+    int nx = 0;
+    
+    int ret = 0;
+    // 네 방향에 대해 모두 탐색
+    // validation checking 해야함.
+    // 상
+    ny = y-1;
+    nx = x;    
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
+        ret = ret + 1 + virus(ny, nx);
+    }
+    // 하
+    ny = y+1;
+    nx = x;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
+        ret = ret + 1 + virus(ny, nx);
+    }
+    // 좌
+    ny = y;
+    nx = x-1;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
+        ret = ret + 1 + virus(ny, nx);
+    }
+    // 우
+    ny = y;
+    nx = x+1;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
+        ret = ret + 1 + virus(ny, nx);
+    }
+    
+    return ret;
+}
+
+int selection(int depth)
+{
+//	cout << "depth : " << depth << endl;
+    if(depth > 3)
+    {
+        int sum = virus(0, 0);
+        // 바이러스를 퍼트려서 도달하는 영역을 모두 계산
+        //for(int i = 0; i < N; i++) {
+        //    for(int j = 0; j < M; j++) {
+        //        if(map[i][j] == 2) {
+        //        	cout << "바이러스 발견!" << i << ", " << j << endl;
+        //    	sum += virus(i, j);	
+        //        }
+        
+                   
+        //    }
+        //}
+        sum = 0;
+        //cout << "sum : " << sum << endl;
+        //cout << "safe - sum " << safe - sum << endl;
+        return safe - sum;
+    }
+    int ret = 0;
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < M; j++) {
+            if(map[i][j] == 0) {
+                map[i][j] = 1;
+                ret = max(ret, selection(depth+1));
+                map[i][j] = 0;
+            }
+        }
+    }
+    
+    return ret;
+}
+int main()
+{
+    // init
+    safe = 0;
+    // input
+    cin >> N >> M;
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < M; j++) {
+            cin >> map[i][j];
+            // pre processing
+            if(map[i][j] == 0) safe += 1;
+        }
+    }
+    
+    int ret = 0;
+    // algorithm
+    // 빈칸인 곳 3개를 선택함.
+    safe = safe - 3;
+    
+    // 바이러스를 퍼트림.
+    // 정답은 최대여야 하므로 virus 영역은 최소여야 한다.
+    for(int y1 = 0; y1 < N; y1++) {
+    	for(int x1 = 0; x1 < N; x1++) {
+    		if(map[y1][x1] != 0) continue;
+    		for(int y2 = 0; y2 < N; y2++) {
+    			for(int x2 = 0; x2 < N; x2++) {
+    				if(map[y2][x2] != 0) continue;
+    				for(int y3 = 0; y3 < N; y3++) {
+    					for(int x3 = 0; x3 < N; x3++) {
+    						if(map[y3][x3] != 0) continue;
+    						set<pair<int,int>> s = {
+
+                                {y1, x1},
+
+                                {y2, x2},
+
+                                {y3, x3}
+
+                            };
+
+                            if (s.size() != 3) continue;
+                            map[y1][x1] = 1;
+                            map[y2][x2] = 1;
+                            map[y3][x3] = 1;
+                            int sum = 0;
+                            for(int i = 0; i < N; i++) {
+                            	for(int j = 0; j < M; j++) {
+                            		
+                            		if(map[i][j] == 2)
+                            			sum += virus(i, j);
+                            	}
+                            }
+                            ret = max(ret, safe-sum);
+    		map[y1][x1] = 0;
+                            map[y2][x2] = 0;
+                            map[y3][x3] = 0;			
+    					}
+    				}
+    			}
+    		}
+    				
+    	}
+    }
+    
+    cout << ret << endl;
+}

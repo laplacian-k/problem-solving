@@ -35,6 +35,7 @@ int main()
         int a = f.first;
         int b = f.second;
         q.pop();
+        map[a][b] = 2;
         ret += 1;
         
         // 큐에 새로운 데이터 적재
@@ -76,9 +77,23 @@ int main()
         else
             d = 2;
         // 네 방향 모두 청소할 공간은 없고 후진 방향이 벽이 아니라면 후진!
-        
+        if(!canGo){
+            if(d == 0 && map[a+1][b] != 1) {
+                q.push(make_pair(a+1, b) );
+            }
+            else if(d == 1 && map[a][b-1] != 1) {
+                q.push(make_pair(a, b-1) );
+            }
+            else if(d == 2 && map[a-1][b] != 1) {
+                q.push(make_pair(a-1, b) );
+            }
+            else if(d == 3 && map[a][b+1] != 1) {
+                q.push(make_pair(a, b+1) );
+            }
+            
+        }
         // 네 방향 모두 청소할 공간이 없고 후진 방향에 벽이 있다면 아무것도 push하지 않음.
-        if()
+        
     }
     
 }

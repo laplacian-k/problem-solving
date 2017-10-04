@@ -13,6 +13,13 @@ bool validation(int y, int x)
 }
 int virus(int y, int x)
 {
+	int temp[8][8];
+	// copy of map
+	for(int i = 0; i < N; i++) {
+		for(int j = 0; j < M; j++) {
+			temp[i][j] = map[i][j];	
+		}
+	}
     int ny = 0;
     int nx = 0;
     
@@ -22,29 +29,29 @@ int virus(int y, int x)
     // 상
     ny = y-1;
     nx = x;    
-    if(validation(ny, nx) && map[ny][nx] == 0) {
-        map[ny][nx] = 2;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
         ret = ret + 1 + virus(ny, nx);
     }
     // 하
     ny = y+1;
     nx = x;
-    if(validation(ny, nx) && map[ny][nx] == 0) {
-        map[ny][nx] = 2;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
         ret = ret + 1 + virus(ny, nx);
     }
     // 좌
     ny = y;
     nx = x-1;
-    if(validation(ny, nx) && map[ny][nx] == 0) {
-        map[ny][nx] = 2;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
         ret = ret + 1 + virus(ny, nx);
     }
     // 우
     ny = y;
     nx = x+1;
-    if(validation(ny, nx) && map[ny][nx] == 0) {
-        map[ny][nx] = 2;
+    if(validation(ny, nx) && temp[ny][nx] == 0) {
+        temp[ny][nx] = 2;
         ret = ret + 1 + virus(ny, nx);
     }
     
@@ -53,16 +60,30 @@ int virus(int y, int x)
 
 int selection(int depth)
 {
+//	cout << "depth : " << depth << endl;
     if(depth > 3)
     {
         int sum = 0;
         // 바이러스를 퍼트려서 도달하는 영역을 모두 계산
         for(int i = 0; i < N; i++) {
-            for(int j = 0; j < M; j++) {
-                if(map[i][j] == 2)
-                    sum += virus(i, j);
-            }
+        	for(int j = 0; j < M; j++) {
+        		cout << map[i][j] << " ";
+        	}
+        	cout << endl;
         }
+        //for(int i = 0; i < N; i++) {
+        //    for(int j = 0; j < M; j++) {
+        //        if(map[i][j] == 2) {
+        //        	cout << "바이러스 발견!" << i << ", " << j << endl;
+        //    	sum += virus(i, j);	
+        //        }
+        
+                   
+        //    }
+        //}
+        sum = virus(0,0) + virus(1,5);
+        //cout << "sum : " << sum << endl;
+        //cout << "safe - sum " << safe - sum << endl;
         return safe - sum;
     }
     int ret = 0;

@@ -69,9 +69,9 @@ int selection(int depth)
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < M; j++) {
             if(map[i][j] == 0) {
-                map[i][j] == 1;
+                map[i][j] = 1;
                 ret = max(ret, selection(depth+1));
-                map[i][j] == 0;
+                map[i][j] = 0;
             }
         }
     }

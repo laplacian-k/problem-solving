@@ -1,0 +1,84 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+// variables
+int N, M;
+int map[51][51];
+int d;
+
+int main()
+{
+    // input 1
+    cin >> N >> M;
+    // init
+    // 외곽을 벽(1)으로 처리하기 위해 전체 범위를 1로 초기화
+    for(int i = 0; i <= N; i++)
+        for(int j = 0; j <= M; j++)
+            map[i][j] = 1;
+    // input 2
+    for(int i = 0; i < N; i++)
+        for(int j = 0; j < M; j++)
+            cin >> map[i][j];
+    // 현재 위치와 방향이 주어짐
+    int y, x;
+    cin >> y >> x;
+    cin >> d;
+    
+    queue<pair<int, int> > q;
+    q.push(make_pair(y, x));
+    
+    int ret = 0;
+    while(!q.empty()) {
+        // 현재 위치를 청소
+        pair<int, int> f = q.top();
+        int a = f.first;
+        int b = f.second;
+        q.pop();
+        ret += 1;
+        
+        // 큐에 새로운 데이터 적재
+        // 1. 현재 위치를 청소한다.
+        // 2. 현재 위치에서 현재 방향을 기준으로 왼쪽방향부터 차례대로 탐색을 진행한다.
+        //    1. 왼쪽 방향에 아직 청소하지 않은 공간이 존재한다면, 그 방향으로 회전한 다음 한 칸을 전진하고 1번부터 진행한다.
+        //    2. 왼쪽 방향에 청소할 방향이 없다면, 그 방향으로 회전하고 2번으로 돌아간다.
+        //    3. 네 방향 모두 청소가 이미 되어있거나 벽인 경우에는, 바라보는 방향을 유지한 채로 한 칸 후진을 하고 2번으로 돌아간다.
+        //       즉 후진 방향이 벽이 아닐 경우만 가능!
+        //    4. 네 방향 모두 청소가 이미 되어있거나 벽이면서, 뒤쪽 방향이 벽이라 후진도 할 수 없는 경우에는 작동을 멈춘다.
+        
+        // d를 기준으로 왼쪽을 탐색!
+        // d : 북(0) 동(1) 남(2) 서(3)
+        // 0 : 빈칸 1 : 벽 2 : 청소함.
+        // d를 기준으로 왼쪽 탐색, 청소 공간 있으면 push 없으면 d 회전
+        bool canGo = false;
+        if(d == 0 && map[a][b-1] == 0) {
+            canGo = true;
+            q.push(make_pair(a, b-1));
+        }
+        else
+            d = 3;
+        if(d == 1 && map[a-1][b] == 0){
+            canGo = true;
+            q.push(make_pair(a-1, b));
+        }            
+        else
+            d = 0; 
+        if(d == 2 && map[a][b+1] == 0) {
+            canGo = true;
+            q.push(make_pair(a, b+1));
+        }            
+        else
+            d = 1;
+        if(d == 3 && map[a+1][b] == 0){
+            canGo = true;
+            q.push(make_pair(a+1, b));
+        }            
+        else
+            d = 2;
+        // 네 방향 모두 청소할 공간은 없고 후진 방향이 벽이 아니라면 후진!
+        
+        // 네 방향 모두 청소할 공간이 없고 후진 방향에 벽이 있다면 아무것도 push하지 않음.
+        if()
+    }
+    
+}

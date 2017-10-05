@@ -6,7 +6,7 @@ int n, m;
 int wall[50][50];
 int room[50][50];
 int cnt = 0;
-int roomSize[2501]
+int roomSize[2501];
 
 
 //functions
@@ -42,6 +42,7 @@ void dfs(int y, int x)
     return;
 }
 
+
 int main()
 {
     // input
@@ -71,10 +72,55 @@ int main()
     // 이때 동시에 넓이도 구해둠.
     int ret1 = 0;
     for(int i = 1; i <= cnt; i++)
-        ret1 = max(ret1, roomSize[cnt]);
+        ret1 = max(ret1, roomSize[i]);
         
     // 막힌 벽을 전부 한 번씩 뚫고, 그 때마다 가장 큰 영역의 크기를 구함.
+    int ret2 = 0;
+    for(int y = 0; y < m; y++) {
+        for(int x = 0; x < n; x++) {
+            // 벽을 찾자.
+            // 서쪽에 벽이 있을 때는 1을, 북쪽에 벽이 있을 때는 2를, 동쪽에 벽이 있을 때는 4를, 남쪽에 벽이 있을 때는 8을 더한 값이 주어진다
+            int w = wall[y][x];
+            if((w & (1<<0)) == 1) {
+                int ny = y;
+                int nx = x-1;
+                if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
+                    int num1 = room[y][x];
+                    int num2 = room[ny][nx];
+                    ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
+                }
+            }
+            if((w & (1<<1)) == 1) {
+                int ny = y-1;
+                int nx = x;
+                if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
+                    int num1 = room[y][x];
+                    int num2 = room[ny][nx];
+                    ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
+                }
+            }
+            if((w & (1<<2)) == 1) {
+                int ny = y;
+                int nx = x+1;
+                if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
+                    int num1 = room[y][x];
+                    int num2 = room[ny][nx];
+                    ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
+                }
+            }
+            if((w & (1<<3)) == 1) {
+                int ny = y+1;
+                int nx = x;
+                if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
+                    int num1 = room[y][x];
+                    int num2 = room[ny][nx];
+                    ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
+                }
+            }
+        }
+    }
     
     cout << cnt << endl;
     cout << ret1 << endl;
+    cout << ret2 << endl;
 }

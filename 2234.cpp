@@ -90,7 +90,7 @@ int main()
                     ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
                 }
             }
-            if((w & (1<<1)) == 1) {
+            if((w & (1<<1)) == 2) {
                 int ny = y-1;
                 int nx = x;
                 if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
@@ -99,7 +99,7 @@ int main()
                     ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
                 }
             }
-            if((w & (1<<2)) == 1) {
+            if((w & (1<<2)) == 4) {
                 int ny = y;
                 int nx = x+1;
                 if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
@@ -108,7 +108,7 @@ int main()
                     ret2 = max(ret2, roomSize[num1]+roomSize[num2]);
                 }
             }
-            if((w & (1<<3)) == 1) {
+            if((w & (1<<3)) == 8) {
                 int ny = y+1;
                 int nx = x;
                 if((0 <= ny && ny < m) && (0 <= nx && nx < n) && (room[y][x] != room[ny][nx])){
@@ -123,4 +123,3 @@ int main()
     cout << cnt << endl;
     cout << ret1 << endl;
     cout << ret2 << endl;
-}

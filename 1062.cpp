@@ -32,8 +32,8 @@ int solve(int learn, int cnt)
     // 배우는 알파벳의 조합을 만듦.
     for(int i = 0; i < 26; i++) {
         // 이미 배웠으면 skip
-        if((learn & (1>>i)) == 1) continue;
-        ret = max(ret, solve((learn+(1>>i)), cnt+1));
+        if((learn & (1<<i)) == 1) continue;
+        ret = max(ret, solve((learn+(1<<i)), cnt+1));
     }
     
     return ret;
@@ -51,7 +51,7 @@ int main()
     
     // algorithm
     // antatica -> a, n, t, i, c 5글자는 반드시 알아야 함.
-    int learn = (1>>0) + (1>>2) + (1>11) + (1>>14) + (1>>20);
+    int learn = (1<<0) + (1<<2) + (1<<11) + (1<<14) + (1<<20);
     // 5 + antic 이외의 글자 집합의 개수 > K라면 그 단어는 배울 수 없음.
     
     // 2차원 배열로 만들어놓고 알파벳 별로 필요한 개수를 카운트. 가장 필요한 단어부터 배운다? x

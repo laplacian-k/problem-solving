@@ -12,6 +12,7 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 	// 게임을 직접해보면 dir 방향에 대해서만 블럭이 합쳐짐을 알 수 있다.
 	// 상
 	if (dir == 0) {
+		cout << "상" << endl;
 		for (int x = 0; x < N; x++) {
 			// 블럭을 위로 움직임
 			vector<int> b1(N, 0);
@@ -35,7 +36,11 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 				// 0이 나오면 탐색 종료
 				if (b1[i] == 0) break;
 				// 이미 합쳐진 블럭이면 탐색 x
-				if (v[i]) continue;
+				if (v[i]) {
+					if (i == N - 2)
+						b2[idx] = b1[N - 1];
+					continue;
+				}
 				if (b1[i] == b1[i + 1]) {
 					v[i] = v[i + 1] = true;
 					b2[idx] = b1[i] * 2;
@@ -60,6 +65,7 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 	}
 	// 하
 	else if (dir == 1) {
+		cout << "하" << endl;
 		for (int x = 0; x < N; x++) {
 			// 블럭을 아래로 움직임
 			vector<int> b1(N, 0);
@@ -83,7 +89,11 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 				// 0이 나오면 탐색 종료
 				if (b1[i] == 0) break;
 				// 이미 합쳐진 블럭이면 탐색 x
-				if (v[i]) continue;
+				if (v[i]) {
+					if (i == N - 2)
+						b2[idx] = b1[N - 1];
+					continue;
+				}
 				if (b1[i] == b1[i + 1]) {
 					v[i] = v[i + 1] = true;
 					b2[idx] = b1[i] * 2;
@@ -108,6 +118,7 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 	}
 	// 좌
 	else if (dir == 2) {
+		cout << "좌" << endl;
 		for (int y = 0; y < N; y++) {
 			// 블럭을 왼쪽으로 움직임
 			vector<int> b1(N, 0);
@@ -118,10 +129,10 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 					idx++;
 				}
 			}
-			cout << "b1" << endl;
-			for (int i = 0; i < N; i++)
-				cout << b1[i] << " ";
-			cout << endl;
+			//cout << "b1" << endl;
+			//for (int i = 0; i < N; i++)
+			//	cout << b1[i] << " ";
+			//cout << endl;
 
 			// 합칠 수 있다면 갱신함
 			vector<int> b2(N, 0);
@@ -131,7 +142,11 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 				// 0이 나오면 탐색 종료
 				if (b1[i] == 0) break;
 				// 이미 합쳐진 블럭이면 탐색 x
-				if (v[i]) continue;
+				if (v[i]) {
+					if (i == N - 2)
+						b2[idx] = b1[N - 1];
+					continue;
+				}
 				if (b1[i] == b1[i + 1]) {
 					v[i] = v[i + 1] = true;
 					b2[idx] = b1[i] * 2;
@@ -144,10 +159,10 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 						b2[idx] = b1[N - 1];
 				}
 			}
-			cout << "b2" << endl;
-			for (int i = 0; i < N; i++)
-				cout << b2[i] << " ";
-			cout << endl;
+			//cout << "b2" << endl;
+			//for (int i = 0; i < N; i++)
+			//	cout << b2[i] << " ";
+			//cout << endl;
 			// b2값을 board로 이동
 			for (int i = 0; i < N; i++) {
 				board[y][i] = b2[i];
@@ -156,6 +171,7 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 	}
 	// 우
 	else if (dir == 3) {
+		cout << "우" << endl;
 		for (int y = 0; y < N; y++) {
 			// 블럭을 오른쪽으로 움직임
 			vector<int> b1(N, 0);
@@ -166,10 +182,10 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 					idx++;
 				}
 			}
-			cout << "b1" << endl;
-			for (int i = 0; i < N; i++)
-				cout << b1[i] << " ";
-			cout << endl;
+			//cout << "b1" << endl;
+			//for (int i = 0; i < N; i++)
+			//	cout << b1[i] << " ";
+			//cout << endl;
 
 			// 합칠 수 있다면 갱신함
 			vector<int> b2(N, 0);
@@ -179,7 +195,11 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 				// 0이 나오면 탐색 종료
 				if (b1[i] == 0) break;
 				// 이미 합쳐진 블럭이면 탐색 x
-				if (v[i]) continue;
+				if (v[i]) {
+					if (i == N - 2)
+						b2[idx] = b1[N - 1];
+					continue;
+				}
 				if (b1[i] == b1[i + 1]) {
 					v[i] = v[i + 1] = true;
 					b2[idx] = b1[i] * 2;
@@ -192,10 +212,10 @@ vector<vector<int> > update(int dir, vector<vector<int> >& board)
 						b2[idx] = b1[N - 1];
 				}
 			}
-			cout << "b2" << endl;
-			for (int i = 0; i < N; i++)
-				cout << b2[i] << " ";
-			cout << endl;
+			//cout << "b2" << endl;
+			//for (int i = 0; i < N; i++)
+			//	cout << b2[i] << " ";
+			//cout << endl;
 			// b2값을 board로 이동
 			for (int i = 0; i < N; i++) {
 				board[y][i] = b2[N - i - 1];

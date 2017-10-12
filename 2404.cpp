@@ -26,6 +26,16 @@ int main()
     
     // algorithm
     int ret = 0;
-    ret = unit(0, 1);
-    cout << ret << endl;
+    //ret = unit(0, 1);
+    // where is depth?
+    for(int p = 1; p <= 800; p++) {
+        for(int q = 1; q <= 800; q++) {
+            for(int x = 1; x <= 800; x++) {
+                if(q*x > 12000) continue;
+                d[p*x+q][q*x] += d[p][q]; 
+            }
+        }
+    }
+    //cout << ret << endl;
+    cout << d[p][q] << endl;
 }

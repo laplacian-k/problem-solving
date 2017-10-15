@@ -5,7 +5,7 @@ using namespace std;
 int p, q, a, n;
 
 // functions
-int gcd(int x, int y)
+long long gcd(long long x, long long y)
 {
     if(y == 0) return x;
     else return gcd(y, x%y);
@@ -26,11 +26,12 @@ long long unit(int p, int q, int d, int m, int cur)
     
     long long ret = 0;
     // 단위분수 선택
-    for(int next = cur; next <= 800; next++) {
+    // next 범위는 a까지 해야함.
+    for(int next = cur; next <= a; next++) {
         if(m*next > a) break;
-        int bj = p*next-q;
-        int bm = q*next;
-        int k = gcd(bj, bm);
+        long long bj = p*next-q;
+        long long bm = q*next;
+        long long k = gcd(bj, bm);
         bj = bj / k;
         bm = bm / k;    
         ret += unit(bj, bm, d+1, m*next, next);

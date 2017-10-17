@@ -6,7 +6,8 @@ int N, M;
 int r, c;
 int d;
 int a[50][50];
-const int left[4][4] = {};
+const int ny[4][4] = {};
+const int nx[4][4] = {};
 
 int main()
 {

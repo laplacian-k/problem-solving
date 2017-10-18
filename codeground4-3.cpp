@@ -18,7 +18,7 @@ const int score[4][10] = {
 	{11, 8, 8, 16, 16, 7, 7, 19, 19, 3},
 	{6, 10, 10, 15, 15, 2, 2, 17, 17, 3}
 };
-const double PI = 3.14;
+const double PI = 3.14159265;
 
 // functions
 int dart(dat d)

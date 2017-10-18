@@ -72,7 +72,7 @@ int main()
             int ny = y+dy[nd][0];
             int nx = x+dx[nd][0];
             // 좌표공간을 벗어나면 벽으로 간주.
-            if(!((0 <= ny && ny < N) && (0 <= nx && nx < N)))
+            if(!((0 <= ny && ny < N) && (0 <= nx && nx < M)))
                 continue;
             // 청소할 공간이 있다면
             if(a[ny][nx] == 0) {
@@ -92,7 +92,7 @@ int main()
             int ny = y+dy[d][1];
             int nx = x+dx[d][1];
             // 뒤쪽 방향이 벽이라 후진도 할 수 없는 경우에는 작동을 멈춘다.
-            if(!((0 <= ny && ny < N) && (0 <= nx && nx < N)) || a[ny][nx] == 1)
+            if(!((0 <= ny && ny < N) && (0 <= nx && nx < M)) || a[ny][nx] == 1)
                 break;
             // 바라보는 방향을 유지한 채로 한 칸 후진
             y = ny;

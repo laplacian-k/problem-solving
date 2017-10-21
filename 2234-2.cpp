@@ -63,7 +63,7 @@ int main()
 
 	// algorithm
 	int ret1 = 0;
-
+	// dfs
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
 			// 방문한적 있다면 실행 x

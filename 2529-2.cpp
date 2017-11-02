@@ -14,12 +14,8 @@ bool used[10];
 void go(int cur, string val)
 {
     int d = val.length();
-    cout << cur << " " << val << endl;
-    //cout << "d : " << d << endl;
     // k+1개의 숫자를 다 만들었다면
     if(d == k+1) {
-        cout << "숫자 완성" << endl;
-        cout << val << endl;
         long long ans1 = stoll(ret1);
         long long ans2 = stoll(ret2);
         long long v = stoll(val);
@@ -32,8 +28,7 @@ void go(int cur, string val)
     for(int next = 0; next < 10; next++) {
         // 사용한 숫자라면 skip
         if(used[next]) continue;
-        cout << "기호!" <<endl;
-        cout << sign[d-1] << endl;
+        
         used[next] = true;
         if(sign[d-1] == "<" && (cur < next))
             go(next, val+to_string(next));
@@ -56,12 +51,12 @@ int main()
     // input
     cin >> k;
     for(int i = 0; i < k; i ++) {
-        cin >> sign[k];
+        cin >> sign[i];
     }
     /*
     cout << k << endl;
     for(int i = 0; i < k; i ++) {
-        cout << sign[k] << " ";
+        cout << sign[i] << " ";
     }
     cout << endl;
     */

@@ -25,17 +25,17 @@ int teach(int n, int learn)
         // 단어 집합에서 몇개를 읽을 수 있는지 계산
         int ret = 0;
         for(int i = 0; i < N; i++) {
-            if((w[i]&learn) == w[i]) ret += 1;
+            if((learn&w[i]) == w[i]) ret += 1;
         }
         return ret;
     }
     
     int ret = 0;
     // n번째 알파벳을 배움.
-    ret = max(ret, teach(n+1, learn|(1<<n)));
+    ret = max(ret, teach(n+1, learn|(1<<(n+1))));
     // n번째 알파벳을 배우지 않음.
     // antic은 반드시 배움
-    if(n != 'a'-'a' && n != 'n'-'a' && n != 't'-'a' && n != 'i'-'a' && n != 'c'-'a')
+    if(n+1 != 'a'-'a' && n+1 != 'n'-'a' && n+1 != 't'-'a' && n+1 != 'i'-'a' && n+1 != 'c'-'a')
         ret = max(ret, teach(n+1, learn));
     
     return ret;

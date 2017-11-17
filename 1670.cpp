@@ -3,8 +3,8 @@ using namespace std;
 
 // variables
 int N;
-const int MOD = 987654321;
-int D[10001];
+const long long MOD = 987654321;
+long long D[10001];
 
 // functions
 

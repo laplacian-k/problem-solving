@@ -20,7 +20,7 @@ int main()
     D[0] = 1;
     for(int j = 2; j <= N; j += 2) {
         for(int i = 2; i <= j; i += 2) {
-            D[j] += ((D[j-i]%MOD)*(D[i-2]%MOD))%MOD; 
+            D[j] = (D[j] + ((D[j-i]*D[i-2])%MOD))%MOD; 
         }        
     }    
     cout << D[N] << endl;

@@ -11,13 +11,13 @@ int h[100];
 // functions
 void destroy(int i)
 {
-    // 짝수면 왼->오, 홀수면 오->왼        
-    
-    int high = h[i]-1;
+    // 짝수면 왼->오, 홀수면 오->왼    
+    int high = R-h[i];
     // 홀수
     if(i&1){
         for(int k = C-1; k >= 0; k--) {
             if(cave[high][k] == 'x'){
+                cout << "미네랄발견!" << endl;
                 cave[high][k] = '.';
                 break;
             }
@@ -26,6 +26,7 @@ void destroy(int i)
     else {
         for(int k = 0; k < C; k++) {
             if(cave[high][k] == 'x'){
+                cout << "미네랄발견!" << endl;
                 cave[high][k] = '.';
                 break;
             }
@@ -45,6 +46,17 @@ int main()
     for(int i = 0; i < N; i++) {
         cin >> h[i];
     }
+    /*
+    cout << R << " " << C << endl;
+    for(int i = 0; i < R; i++) {
+        cout << cave[i] << endl;
+    }
+    cout << N << endl;
+    for(int i = 0; i < N; i++) {
+        cout << h[i] << " ";
+    }
+    cout << endl;
+    */
     
     // algorithm
     // 동굴을 놓고 소유권을 주장함

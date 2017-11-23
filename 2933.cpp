@@ -7,6 +7,11 @@ int R, C;
 string cave[100];
 int N;
 int h[100];
+int dy[] = {-1, 1, 0, 0};
+int dx[] = {0 , 0,-1, 1};
+int cnt;
+bool visit[100][100];
+int a[100][100];
 
 // functions
 void destroy(int i)
@@ -17,7 +22,7 @@ void destroy(int i)
     if(i&1){
         for(int k = C-1; k >= 0; k--) {
             if(cave[high][k] == 'x'){
-                cout << "미네랄발견!" << endl;
+                //cout << "미네랄발견!" << endl;
                 cave[high][k] = '.';
                 break;
             }
@@ -26,7 +31,7 @@ void destroy(int i)
     else {
         for(int k = 0; k < C; k++) {
             if(cave[high][k] == 'x'){
-                cout << "미네랄발견!" << endl;
+                //cout << "미네랄발견!" << endl;
                 cave[high][k] = '.';
                 break;
             }
@@ -35,6 +40,21 @@ void destroy(int i)
     
     return;
 }
+
+void dfs(int y, int x)
+{
+    // 방문표시
+    visit[y][x] = true;
+    a[y][x] = cnt;
+    
+    for(int i = 0; i < 4; i++) {
+        int ny = y+dy[i];
+        int nx = x+dx[i];
+        if(cave[ny][nx] == '.' || visit[ny][nx]) continue;        
+        dfs(ny, nx);
+    }
+}
+
 int main()
 {
     // input
@@ -73,7 +93,24 @@ int main()
         // 미네랄 파괴
         destroy(i);
         // 클러스터 검증
+        // init
+        for(int j = 0; j < R; j++) {
+            for(int k = 0; k < C; k++) {
+                visit[j][k] = false;
+                a[j][k] = 0;
+            }
+        }
+        cnt = 0;
+        for(int j = 0; j < R; j++) {
+            for(int k = 0; k < C; k++) {
+                if(cave[j][k] == '.' || visit[j][k]) continue;
+                cnt++;
+                dfs(j, k);
+            }
+        }
         
+        
+        if(cnt == 2){}
         // 동굴업데이트
     }
     

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 // variables
@@ -60,7 +62,6 @@ void update()
 {
     // 떨어질 클러스터의 번호를 찾는다.
     // 클러스터번호의 최대 y값이 7이 아니라면 공중에 떠있는 클러스터
-    //int check1 = pow(2,cnt)-1;
     int check = 0;
     for(int x = 0; x < C; x++) {
         if(a[R-1][x] == 0) continue;
@@ -69,19 +70,77 @@ void update()
     }
     
     int cluster = -1;
-    for(int i = 0; i < cnt; i++) {
+    for(int i = 1; i <= cnt; i++) {
         // 1~cnt까지의 집합 중 바닥에 닿아있지 않은 클러스터를 발견하면 탐색 종료.
-        if(!(check&(1<<i))) {
-            cluster = i+1;
+        if(!(check&(1<<(i-1)))) {
+            cluster = i;
             break;
         }
     }    
     //cout << cluster << endl;
+    
+    vector<pair<int, int> > p;
+    
     // 전부 닿아있으면 종료
     if(cluster == -1) return;
-    else {
-        // 찾은 클러스터 번호 기준, 아래로 움직여봄.
-        // 바닥에 존재하는 미네랄 중 하나라도 땅에 닿거나 다른 클러스터에 닿는다면 이동 종료.
+    
+    vector<int> ys(C, -1);    // x좌표 기준 최대 y값의 집합
+    // 찾은 클러스터 번호 기준, 아래로 움직여봄.
+    // 바닥에 존재하는 미네랄 중 하나라도 땅에 닿거나 다른 클러스터에 닿는다면 이동 종료.
+    // 바닥에 존재하는 미네랄의 좌표를 구한다.
+    // x좌표를 기준으로 순회하면서 가장 큰 y값을 찾는다.
+    for(int x = 0; x < C; x++) {
+        for(int y = 0; y < R; y++){
+            if(a[y][x] != cluster) continue;
+            p.push_back(make_pair(y, x));    // 클러스터의 위치를 저장해둠.
+            ys[x] = max(ys[x], y);                
+        }
+    }
+    
+    // 0
+    // 1
+    // 2    base
+    // 3
+    // R
+    int h = 100000000;
+    for(int x = 0; x < C; x++) {
+        if(ys[x] == -1) continue;    // y좌표가 존재하지 않으면 skip
+        int base = ys[x];
+        h = min(h, (R-1)-base);
+        for(int gap = 1; gap <= (R-1)-base; gap++) {
+            if(base+gap+1 == R) break;
+            if(a[base+gap+1][x] == 0) continue;
+            if(a[base+gap+1][x] != cluster) {
+                h = min(h, gap);
+            }
+        }
+        
+        //for(int ny = base+1; ny < R; ny++) {
+            // 다른 클러스터를 만나거나 바닥에 닿으면 끝남
+        //    if(a[ny][x] == 0) continue;
+        //    if(a[ny][x] != cluster) {
+        //        h = min(h, y-base);
+        //        break;
+        //    }
+        //}
+    }
+    
+    // 기존 위치는 전부 .으로, 변경될 위치는 전부 x로
+    for(int i = 0; i < p.size(); i++){
+        int y = p[i].first;
+        int x = p[i].second;
+        //a[y][x] = 0;
+        //a[y+h][x] = cluster;
+        cave[y][x] = '.';
+        //cave[y+h][x] = 'x';           
+    }
+    for(int i = 0; i < p.size(); i++){
+        int y = p[i].first;
+        int x = p[i].second;
+        //a[y][x] = 0;
+        //a[y+h][x] = cluster;
+        //cave[y][x] = '.';
+        cave[y+h][x] = 'x';            
     }
     
     return;    
@@ -140,7 +199,7 @@ int main()
                 dfs(j, k);
             }
         }
-        
+        /*
         cout << "cnt : " << cnt << endl;
         for(int j = 0; j < R; j++) {
             for(int k = 0; k < C; k++) {
@@ -149,7 +208,7 @@ int main()
             cout << endl;
         }
         cout << endl;
-        
+        */
         // 동굴업데이트
         // 클러스터가 1개일 경우에도 아래로 떨어질 수 있다.
         update();

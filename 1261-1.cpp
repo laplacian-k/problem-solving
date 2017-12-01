@@ -67,7 +67,7 @@ int main()
             // 범위를 벗어나면 skip
             if(!((0 <= ny && ny < N) && (0 <= nx && nx < M))) continue;
             // 이미 방문했다면 skip
-            if(visit[ny][nx]) continue;
+            //if(visit[ny][nx]) continue;
             // 최소가 갱신된다면
             //cout << "dist[next] : " << dist[ny][nx] << endl;
             //cout << "dist[cur] : " << dist[y][x] << endl;

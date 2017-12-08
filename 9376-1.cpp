@@ -11,14 +11,16 @@ const int dy[] = {-1, 1, 0, 0};
 const int dx[] = {0, 0, -1, 1};
 
 // functions
-vector<vector<int> > bfs(vector<string>& a, int y, int x)
+vector<vector<int> > bfs(vector<string>& j, int a, int b)
 {
-    int n = a.size();
-    int m = a[0].length();
+    int n = j.size();
+    int m = j[0].size();
     
     vector<vector<int> > d(n, vector<int>(m, -1));    // dist 초기화
     deque<pair<int, int> > dq;
-    dq.push_front(make_pair(y, x));
+    //dq.push_front(make_pair(a, b));
+    dq.push_back(make_pair(a, b));
+    d[a][b] = 0;
     
     while(!dq.empty()) {
         // 방문
@@ -35,9 +37,9 @@ vector<vector<int> > bfs(vector<string>& a, int y, int x)
             // 이미 방문했다면 skip
             if(d[ny][nx] != -1) continue;
             // 벽이라면 skip
-            if(a[ny][nx] = '*') continue;
+            if(j[ny][nx] == '*') continue;
             // 문을 열어야 된다면
-            if(a[ny][nx] == '#') {
+            if(j[ny][nx] == '#') {
                 d[ny][nx] = d[y][x] + 1;
                 dq.push_back(make_pair(ny, nx));    // 뒤쪽에 push
             }
@@ -74,12 +76,12 @@ int main()
             jail[i] = "." + s + ".";
         }
         // output
-        
+        /*
         cout << h << " " << w << endl;
         for(int i = 0; i < h+2; i++) {
             cout << jail[i] << endl;
         }
-        
+        */
         
         // algorithm
         // 두명의 죄수가 만나는 최소 거리의 위치를 구함
@@ -90,7 +92,7 @@ int main()
         vector<vector<int> > d0 = bfs(jail, 0, 0);
         
         // 죄수의 위치를 찾음
-        vector<pair<int, int> > p(2);
+        vector<pair<int, int> > p;
         for(int i = 1; i <= h; i++) {
             for(int j = 1; j <=w; j++) {
                 if(jail[i][j] == '$') p.push_back(make_pair(i, j));

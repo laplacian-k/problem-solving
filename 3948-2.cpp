@@ -15,11 +15,12 @@ int main()
     // pre processing
     // nCr = n-1Cr-1 + n-1Cr
     c[0][0] = 1;
-    c[0][1] = 0;
-    c[1][0] = 1;
+    //c[0][1] = 0;
+    //c[1][0] = 1;
     
     for(int i = 1; i <= 20; i++) {
-        for(int j = 0; j <= i; j++) {
+    	c[i][0] = 1;
+        for(int j = 1; j <= i; j++) {
             c[i][j] = c[i-1][j-1]+c[i-1][j];
         }
     }
@@ -51,9 +52,21 @@ int main()
                 u[i] = u[j-1]*u[i-j]*c[i-1][j-1];
             }
         }
+        
+        cout << "u[i] 출력" << endl;
+        for(int i = 0; i <= N; i++) {
+        	cout << u[i] << " ";
+        }
+        cout << endl;
+        
+        cout << "정답출력" << endl;
         long long ret = 0;
-        ret = 2;
-        ret = ret*u[N];        
+        if(N == 1) ret = 1;
+        else {
+	ret = 2;
+	ret = ret*u[N];        
+        }
+        
         cout << ret << endl;
     }
     

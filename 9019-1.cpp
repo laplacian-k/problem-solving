@@ -114,14 +114,14 @@ int main()
         // B부터 from으로 추적하면서 command를 출력!
         stack<string> ans;
         int cur = stoi(B);
-        string cur2 = "F";
+        string cur2 = "";
         while(cur != -1) {
             ans.push(cur2);
             cur2 = from[cur].second;
             cur = from[cur].first;            
         }
         
-        while(ans.top() != "F") {
+        while(!ans.empty()) {
             cout << ans.top();
             ans.pop();
         }

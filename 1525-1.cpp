@@ -1,44 +1,72 @@
 #include <iostream>
+#include <string>
+#include <algorithm>
 #include <vector>
+#include <map>
 using namespace std;
 
 // variables
-const int inf = 1000000000;
+const int dy[] = {-1, 1, 0, 0};
+const int dx[] = {0, 0, -1, 1};
+map<int, bool> visit;
+const int inf = 1000000000;    // max = 9!
+
 
 // functions
-int dfs(vector<vector<int> >& p, int d)
+int dfs(int cur)
 {
     // 정리된 상태를 찾았으면 return
-    bool fin = true;
-    for(int i = 0; i < 3; i++) {
-        for(int j = 0; j < 3; j++) {
-            if(p[i][j] != (i*3)+(j+1)){
-                fin = false;
-            }
-        }
-    }
-    if(fin) return d;
+    if(cur = 123456789) return 0;
     
+    string puzzle = to_string(cur);
+    // 0의 위치를 찾음.
+    int z = puzzle.find('9');
+    int y = z/3;
+    int x = z%3;
+    
+    int ret = inf;
     for(int i = 0; i < 4; i++) {
+        int ny = y + dy[i];
+        int nx = x + dx[i];
         
+        // 벗어나면 skip
+        if(!((0 <= ny && ny < 3) && (0<= nx && nx < 3))) continue;
+        
+        // 다음 숫자를 만듦.
+        string next_puzzle = puzzle;
+        swap(next_puzzle[z], next_puzzle[3*ny + nx]);
+            
+        int next = stoi(next_puzzle);            
+        
+        // 갔던 곳이라면 가지 않는다.
+        if(visit.count(next) != 0 && visit[next]) continue;
+        visit[next] = true;
+        ret = min(ret, dfs(next) + 1);
+        visit[next] = false;  
     }
-    return 0;
+    
+    return ret;
 }
 
 int main()
 {
     // init
-    vector<vector<int> > a(3, vector<int>(3, 0));
+    
     // input
+    int start = 0;
     for(int i = 0; i < 3; i++) {
         for(int j = 0; j < 3; j++) {
-            cin >> a[i][j];
+            int temp;
+            cin >> temp;
+            if(temp == 0) temp = 9;
+            start = start*10 + temp;
         }
     }
     
     // algorithm
     // 이동이 불가능한 경우 -1을 출력한다.
-    int ret = dfs(a, 0);
+    visit[start] = true;
+    int ret = dfs(start);
     cout << ret << endl;
     return 0;
 }

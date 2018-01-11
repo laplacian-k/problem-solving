@@ -13,10 +13,9 @@ const int inf = 1000000000;    // max = 9!
 
 
 // functions
-int dfs(int cur)
+int dfs(int cur, int d)
 {
-    // 정리된 상태를 찾았으면 return
-    if(cur == 123456789) {cout << "정답"<< endl; return 0;}
+    if(cur == 123456789) return d;
     
     string puzzle = to_string(cur);
     // 0의 위치를 찾음.
@@ -42,8 +41,7 @@ int dfs(int cur)
         if(visit.count(next) != 0 && visit[next]) continue;
         
         visit[next] = true;
-        ret = min(ret, dfs(next) + 1);
-        visit[next] = false;  
+        ret = min(ret, dfs(next, d+1));
     }
     
     return ret;
@@ -65,7 +63,7 @@ int main()
     // algorithm
     // 이동이 불가능한 경우 -1을 출력한다.
     visit[start] = true;
-    int ret = dfs(start);
+    int ret = dfs(start, 0);
     cout << ret << endl;
     return 0;
 }

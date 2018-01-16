@@ -29,6 +29,10 @@ void doUserImplementation(int guess[]) {
 	int temp = -1;
 	int prev_strike = -1;
 	int prev_ball = -1;
+    bool in[10];
+    for(int i = 0; i < 10; i++) {
+        in[i] = false;
+    }
 
 	bool canUse[10][4];
 	for (int i = 0; i < 10; i++) {
@@ -94,6 +98,27 @@ void doUserImplementation(int guess[]) {
 		}
 
 		if (!canGo) continue;
+        
+        canGo = true;
+        // 반드시 사용해야할 숫자 검증
+        for(int n = 0; n < 10; n++) {
+            // true일 경우
+        	if(in[n]) {
+                bool canPass = false;
+            	for(int m = 0; m < 4; m++) {
+                    // 한개라도 있으면 통과
+                    if(n == guess[m]) {
+                        canPass = true;
+                    }
+                }
+                if(!canPass) {
+                    canGo = false; 
+                	break;
+                }
+            }
+        }
+        
+        if(!canGo) continue;
 
 		// canUse 출력
 		
@@ -170,6 +195,7 @@ void doUserImplementation(int guess[]) {
 				// 바뀐 숫자 개수로 비교
 				if (s_diff > 0 && (s_diff == num_diff)) {
 					// cur에 바뀐 숫자는 그 자리에 반드시 사용되야 함.
+                    // prev에 사용된 숫자는 사용할 수 없음.
 					for (int n = 0; n < 4; n++) {
 						int p = (temp / base[n]) % 10;
 						int c = (number[i] / base[n]) % 10;
@@ -179,12 +205,16 @@ void doUserImplementation(int guess[]) {
 								if (m == c) continue;
 								canUse[m][n] = false;
 							}
+                            for(int m = 0; m <4; m++) {
+                            	canUse[p][m] = false;
+                            }                            
 							
 						}
 					}
 				}
 				if (s_diff < 0 && (-s_diff == num_diff)) {
 					// prev에 쓰였던 숫자들은 그 자리에 반드시 사용되야 함.
+                    // cur에 사용된 숫자는 사용할 수 없음.
 					for (int n = 0; n < 4; n++) {
 						int p = (temp / base[n]) % 10;
 						int c = (number[i] / base[n]) % 10;
@@ -194,6 +224,10 @@ void doUserImplementation(int guess[]) {
 								if (m == p) continue;
 								canUse[m][n] = false;
 							}
+                            
+                            for(int m = 0; m <4; m++) {
+                            	canUse[c][m] = false;
+                            }                              
 
 						}
 					}
@@ -205,6 +239,8 @@ void doUserImplementation(int guess[]) {
 				// 바뀐 숫자 개수로 비교
 				if (b_diff > 0 && (b_diff == num_diff)) {
 					// prev에 사용했던 숫자는 사용할 수 없음!
+                    // cur에 추가된 숫자는 반드시 사용
+                    // cur에 추가된 숫자는 해당자리에 사용 x
 					for (int n = 0; n < 4; n++) {
 						int p = (temp / base[n]) % 10;
 						int c = (number[i] / base[n]) % 10;
@@ -212,12 +248,17 @@ void doUserImplementation(int guess[]) {
 							for (int m = 0; m < 4; m++) {
 								canUse[p][m] = false;
 							}
+                            
+                            in[c] = true;
+                            canUse[c][n] = false;
 
 						}
 					}
 				}
 				if (b_diff < 0 && (-b_diff == num_diff)) {
 					// cur에 사용한 숫자는 사용할 수 없음!
+                    // prev에 사용한 숫자는 반드시 포함
+                    // prev에 사용한 숫자는 그자리에서 사용 불가
 					for (int n = 0; n < 4; n++) {
 						int p = (temp / base[n]) % 10;
 						int c = (number[i] / base[n]) % 10;
@@ -225,7 +266,8 @@ void doUserImplementation(int guess[]) {
 							for (int m = 0; m < 4; m++) {
 								canUse[c][m] = false;
 							}
-
+                            in[p] = true;
+                            canUse[p][n] = false;
 						}
 					}
 				}

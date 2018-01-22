@@ -14,7 +14,7 @@ void go(vector<int>& p)
         for(int i = 0; i < p.size(); i++) {
             cout << p[i] << ' ';
         }
-        cout << endl;
+        cout << '\n';
         return;
     }
     

@@ -4,10 +4,10 @@ using namespace std;
 // variables
 int N;
 int dvsn;
-int k;
+long long k;
 int p[21];
 bool visit[21];
-int fact[21];
+long long fact[21];
 
 int main()
 {
@@ -37,7 +37,7 @@ int main()
         // 1 <= 1! visit[2]
         
         for(int x = N; x >= 1; x--) {
-            int val = 1;
+            long long val = 1;
             for(int i = 1; i <= N; i++) {
                 if(visit[i]) continue;
                 if(k <= val*fact[x-1]) {
@@ -65,7 +65,7 @@ int main()
         // 1324
         // 0*3!+1*2!+0*1!
         // {1, 3}
-        int ret = 0;
+        long long ret = 0;
         for(int x = 0; x < N-1; x++) {
             int val = 0;
             for(int i = 1; i < p[x]; i++) {

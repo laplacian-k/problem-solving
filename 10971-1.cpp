@@ -14,18 +14,18 @@ int ans;
 // functions
 void go(int cur, int val)
 {   
-    cout << bitset<32>(visit) << '\n';
-    cout << bitset<32>((1<<N)-1) << '\n';
-    cout << cur << ", " << val << '\n';
+    //cout << bitset<32>(visit) << '\n';
+    //cout << bitset<32>((1<<N)-1) << '\n';
+    //cout << cur << ", " << val << '\n';
     // 전부 다 방문했고 마지막 도시에서 start로 갈 수 있을 경우 끝남
     if(visit == ((1<<N)-1) && w[cur][start] != 0) {
-        cout << "전부 방문" << '\n';
+        //cout << "전부 방문" << '\n';
         ans = min(ans, val+w[cur][start]);
         return;
     }
     // 전부 방문하기만 했을 경우 종료시킴
     if(visit == ((1<<N)-1)) {
-        cout << "전부 방문" << '\n';
+        //cout << "전부 방문" << '\n';
         return;
     }
     
@@ -54,8 +54,8 @@ int main()
     
     // input
     cin >> N;
-    for(int i = 0; i < N; i++) {
-        for(int j = 0; j < N; j++) {
+    for(int i = 1; i <= N; i++) {
+        for(int j = 1; j <= N; j++) {
             cin >> w[i][j];
         }
     } 

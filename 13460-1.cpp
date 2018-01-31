@@ -73,12 +73,17 @@ void go(vector<vector<int> >& cur, int dir, int d, bool blue, bool red)
     }
     
     if(dir != -1) {
+        bool redGo = true;
+        bool blueGo = true;
         while(1) {
+            // 상하좌우에 따라 먼저 움직일 구슬을 선택해야함.
             int nry = ry + dy[dir];
             int nrx = rx + dx[dir];
+            // 장애물이거나 blue면 갈 수 없음.
             
             int nby = by + dy[dir];
             int nbx = bx + dx[dir];
+            // 장애물이거나 red면 갈 수 없음.
             
             ry = nry;
             rx = nrx;

@@ -34,6 +34,10 @@ vector<vector<int> > update(vector<vector<int> > cur, int dir)
         
     }
     
+    
+
+    
+    
     return next;
 }
 void go(vector<vector<int> >& cur, int dir, int d, bool blue, bool red)
@@ -50,32 +54,65 @@ void go(vector<vector<int> >& cur, int dir, int d, bool blue, bool red)
         return;
     }
     
-    // 빨간구슬, 파란구슬의 위치를 찾음
-    // 빨간구슬, 파란구슬 모두 갈 곳이 없을 때까지
-    bool b = false;
-    bool r = false;
-    
-    int ry = -1;
-    int rx = -1;
-    int by = -1;
-    int bx = -1;
-    for(int i = 0; i < N; i++) {
-        for(int j = 0; j < M; j++) {
-            if(cur[i][j] == 'R') {
-                ry = i;
-                rx = j;
+    for(int ndir = 0; ndir < 4; ndir++) {
+        // 같은 방향으로는 가지 않음.
+        if(ndir == dir) continue;
+        vector<vector<int> > next = cur;
+        
+        // update board
+        // update(next, ndir);
+        
+        // 빨간구슬, 파란구슬의 위치를 찾음
+        int ry = -1;
+        int rx = -1;
+        int by = -1;
+        int bx = -1;
+        for(int i = 0; i < N; i++) {
+            for(int j = 0; j < M; j++) {
+                if(cur[i][j] == 'R') {
+                    ry = i;
+                    rx = j;
+                }
+                if(cur[i][j] == 'B') {
+                    by = i;
+                    by = j;
+                }
             }
-            if(cur[i][j] == 'B') {
-                by = i;
-                by = j;
+        }        
+        
+        // 먼저 움직일 구슬을 찾는다.
+        int prior = 0;    // equal(0), red(1), blue(2)        
+        if(rx == bx) {
+            // 상
+            if(ndir == 0) {
+                if(ry > by) prior = 1;
+                else if(ry < by) prior = 2;
+            }            
+            // 하
+            else if(ndir == 1) {
+                if(ry > by) prior = 2;
+                else if(ry < by) prior = 1;                
             }
         }
-    }
-    
-    if(dir != -1) {
+        
+        if(ry == rx) {
+            // 좌
+            if(ndir == 2) {
+                if(rx > bx) prior = 2;
+                else if(rx < bx) prior = 1;                
+            }
+            // 우
+            else if(ndir == 3) {
+                if(rx > bx) prior = 1;
+                else if(rx < bx) prior = 2;                
+            }
+        }
+        
+        // 둘다 갈 수 없을 때 종료
         bool redGo = true;
         bool blueGo = true;
         while(1) {
+            if(!redGo && !blueGo)
             // 상하좌우에 따라 먼저 움직일 구슬을 선택해야함.
             int nry = ry + dy[dir];
             int nrx = rx + dx[dir];
@@ -91,17 +128,27 @@ void go(vector<vector<int> >& cur, int dir, int d, bool blue, bool red)
             by = nby;
             bx = nbx;
         
+        }                
+            }
+            else {
+                
+            }
         }
-    }
+        // 빨간구슬, 파란구슬 모두 갈 곳이 없을 때까지
+        bool b = false;
+        bool r = false;
+    
 
     
-    if(dir == -1 || dir == 0 || dir == 1) {
-        go(next, 2, d+1);
-        go(next, 3, d+1);
+    if(dir != -1) {
+
     }
-    if(dir == -1 || dir == 2 || dir == 3) {
-        go(next, 0, d+1);
-        go(next, 1, d+1);
+        if(ndir == 0) {
+            
+        }
+        
+        
+        go(next, ndir, d+1, b, r);
     }
     
     return;
@@ -130,7 +177,7 @@ int main()
     // 보드의 상태가 주어졌을 때, 최소 몇 번 만에 빨간 구슬을 구멍을 통해 빼낼 수 있는지 구하는 프로그램을 작성하시오.
     
     // 상하좌우로 이동
-    go(board, -1, 0);
+    go(board, -1, 0, false, false);
     
     if(ans == inf) cout << -1 << '\n';    
     else cout << ans << '\n';

@@ -111,42 +111,59 @@ void go(vector<vector<int> >& cur, int dir, int d, bool blue, bool red)
         // 둘다 갈 수 없을 때 종료
         bool redGo = true;
         bool blueGo = true;
-        while(1) {
-            if(!redGo && !blueGo)
-            // 상하좌우에 따라 먼저 움직일 구슬을 선택해야함.
-            int nry = ry + dy[dir];
-            int nrx = rx + dx[dir];
-            // 장애물이거나 blue면 갈 수 없음.
-            
-            int nby = by + dy[dir];
-            int nbx = bx + dx[dir];
-            // 장애물이거나 red면 갈 수 없음.
-            
-            ry = nry;
-            rx = nrx;
-            
-            by = nby;
-            bx = nbx;
-        
-        }                
-            }
-            else {
+        while(redGo || blueGo) {
+            // 따로 움직여도 상관 없음.
+            // red를 먼저 움직여야 함
+            // * 구슬로직 추가해야함!!
+            if(prior <= 1) {
+                int nry = ry + dy[ndir];
+                int nrx = rx + dx[ndir];
+                if(next[nry][nrx] == '#') {
+                    redGo = false;
+                }
+                else {                    
+                    ry = nry;
+                    rx = nrx;
+                    swap(next[nry][nrx], next[ry][rx]);
+                }
                 
+                int nby = by + dy[ndir];
+                int nbx = bx + dx[ndir];
+                if(next[nby][nbx] == '#' || next[nby][nbx] = 'R') {
+                    blueGo = false;
+                }
+                else {
+                    swap(next[nby][nbx], next[by][bx]);
+                    by = nby;
+                    bx = nbx;
+                }
             }
-        }
-        // 빨간구슬, 파란구슬 모두 갈 곳이 없을 때까지
-        bool b = false;
-        bool r = false;
-    
-
-    
-    if(dir != -1) {
-
-    }
-        if(ndir == 0) {
-            
-        }
+            // blue를 먼저 움직여야 함
+            else if(prior == 2) {
+                int nby = by + dy[ndir];
+                int nbx = bx + dx[ndir];
+                if(next[nby][nbx] == '#') {
+                    blueGo = false;
+                }
+                else {
+                    swap(next[nby][nbx], next[by][bx]);
+                    by = nby;
+                    bx = nbx;
+                }
+                
+                int nry = ry + dy[ndir];
+                int nrx = rx + dx[ndir];
+                if(next[nry][nrx] == '#' || next[nry][nrx] = 'B') {
+                    redGo = false;
+                }
+                else {
+                    swap(next[nry][nrx], next[ry][rx]);
+                    ry = nby;
+                    rx = nbx;
+                }                
+            }
         
+        }
         
         go(next, ndir, d+1, b, r);
     }

@@ -203,7 +203,7 @@ int main()
  
     // input
     cin >> N >> M;
-    vector<string> board(M);
+    vector<string> board(N);
     for(int i = 0; i < N; i++) {
         cin >> board[i];
     }

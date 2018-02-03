@@ -70,7 +70,10 @@ vector<string> update(vector<string> cur, int ndir)
     // 둘다 갈 수 없을 때 종료
     bool rGo = true;
     bool bGo = true;
+    
     while(rGo || bGo) {
+        //cout << ry << ", " << rx << "/" << by << ", " << bx << '\n';
+        //cout << rGo << ", " << bGo << '\n';
         int nry = ry + dy[ndir];
         int nrx = rx + dx[ndir];
  
@@ -94,7 +97,7 @@ vector<string> update(vector<string> cur, int ndir)
                 swap(next[nry][nrx], next[ry][rx]);
                 ry = nry;
                 rx = nrx;                    
-            }
+            }    
  
             // 장애물이거나 빨간 구슬이거나 구멍일 경우
             if(next[nby][nbx] == '#' || next[nby][nbx] == 'R' || next[nby][nbx] == 'O') {
@@ -126,7 +129,7 @@ vector<string> update(vector<string> cur, int ndir)
             }
             else {
                 // 구슬 이동
-                //swap(next[nby][nbx], next[by][bx]);
+                swap(next[nby][nbx], next[by][bx]);
                 by = nby;
                 bx = nbx;
             }
@@ -142,9 +145,9 @@ vector<string> update(vector<string> cur, int ndir)
             }
             else {
                 // 구슬 이동
-                //swap(next[nry][nrx], next[ry][rx]);
-                ry = nby;
-                rx = nbx;
+                swap(next[nry][nrx], next[ry][rx]);
+                ry = nry;
+                rx = nrx;
             }                
         }
     }
@@ -154,13 +157,13 @@ vector<string> update(vector<string> cur, int ndir)
  
 void go(vector<string>& cur, int dir, int d, bool b, bool r)
 {
-    cout << "d = " << d << ", dir = " << dir << '\n';
-    for(int i = 0; i < N; i++) {
-        cout << cur[i] << '\n';
-    }
-    if(d == 1) return;
+    //cout << "d = " << d << ", dir = " << dir << '\n';
+    //for(int i = 0; i < N; i++) {
+    //    cout << cur[i] << '\n';
+    //}
+    
     // 가지치기. 현재 정답보다 d가 크다면 가지 않는다.
-    //if(ans <= d) return;
+    if(ans <= d) return;
     // 10번을 초과하여 이동했다면 return
     if(d > 10) return;
     // 파란공이 구멍에 들어갔다면
@@ -172,10 +175,7 @@ void go(vector<string>& cur, int dir, int d, bool b, bool r)
     }
  
     // board update
-    for(int ndir = 0; ndir < 4; ndir++) {
-        bool b = false;
-        bool r = false;
- 
+    for(int ndir = 0; ndir < 4; ndir++) { 
         // 같은 방향으로는 가지 않음.
         if(ndir == dir) continue;
         // 상->하, 하->상, 좌->우, 우->좌 도 무의미한 이동.(구슬이 중간에 위치하는 경우는 처음밖에 없다)
@@ -183,6 +183,8 @@ void go(vector<string>& cur, int dir, int d, bool b, bool r)
         if(dir == 1 && ndir == 0) continue;
         if(dir == 2 && ndir == 3) continue;
         if(dir == 3 && ndir == 2) continue;
+        
+        //cout << "dir = " << dir << ", " << "ndir = " << ndir << '\n';
  
         // board update
         // 파란구슬, 빨간구슬이 구멍에 빠졌는지도 알아야 함.

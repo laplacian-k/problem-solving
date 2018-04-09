@@ -54,7 +54,7 @@ vector<vector<int> > move(vector<vector<int> > b, int dir)
         for(int j = 0; j < N; j++) {
             // preprocessing
             vector<int> non_zero_b(N, 0);
-            int idx2 = 0;
+            int idx2 = N-1;
             for(int i = N-1; i >= 0; i--) {
                 if(b[i][j] != 0) {
                     non_zero_b[idx2] = b[i][j];

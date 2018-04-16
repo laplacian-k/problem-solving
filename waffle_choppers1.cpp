@@ -40,11 +40,20 @@ int main() {
 	for(int t = 1; t <= tests; t++) {
 		// input
 		cin >> R >> C >> H >> V;
+		int chips = 0;
 		for(int i = 0; i < R; i++) {
 			cin >> w[i];
+			for(int j = 0; j < C; j++) {
+				if(w[i][j] == '@') chips += 1;
+			}
 		}
+		int diners = (H+1)*(V+1);
 		
 		// algorithm
+		cout << "Case #" << t << ": ";
+		// preprocessing
+		if(chips == 0) {cout << "POSSIBLE" << "\n"; continue;}
+		if(chips%diners != 0) {cout << "IMPOSSIBLE" << "\n"; continue;}
 		
 		vector<pair<int, int> > gen;
 		for(int h = 1; h <= R-1; h++) {
@@ -63,7 +72,7 @@ int main() {
 			if(ret) break;
 		}
 		
-		cout << "Case #" << t << ": ";
+		
 		if(ret) cout << "POSSIBLE" << "\n";
 		else    cout << "IMPOSSIBLE" << "\n";
 	}

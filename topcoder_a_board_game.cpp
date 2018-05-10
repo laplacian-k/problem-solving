@@ -16,6 +16,7 @@ string ABoardGame::whoWins(vector<string> board) {
     int N = L/2;
 	vector<int> regions(N+1, 0);
     vector<pair<int, int> > bases;
+    
     // make bases
     for(int i = N-1; i <= N; i++) {
         for(int j = N-1; j <= N; j++) {
@@ -37,8 +38,7 @@ string ABoardGame::whoWins(vector<string> board) {
             int ny = bases[dir].first;
             int nx = bases[dir].second;
             
-            int index = (int)sqrt((i-ny)*(i-ny)+(j-nx)*(j-nx));
-            index = index + 1;
+            int index = max(abs(i-ny), abs(j-nx)) + 1;
             if(board[i][j] == 'A') {regions[index]++;}
             else if(board[i][j] == 'B') {regions[index]--;}
         }

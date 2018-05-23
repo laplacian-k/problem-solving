@@ -9,14 +9,14 @@ public:
     
 int ANewHope::count(vector<int> firstWeek, vector<int> lastWeek, int D) {
     int N = firstWeek.size();
-    vector<int> idxs(N, -1);
+    vector<int> idxs(2501, -1);
     
     for(int i = 0; i < N; i++) {
         idxs[lastWeek[i]] = i;
     }
     
     int ret = 0;
-    vecter<int> conv = firstWeek;
+    vector<int> conv = firstWeek;
     while(1) {
         for(int i = 0; i < N; i++) {
             conv[(i+D)%N] = firstWeek[i];
@@ -26,7 +26,8 @@ int ANewHope::count(vector<int> firstWeek, vector<int> lastWeek, int D) {
         
         bool canMake = true;
         for(int i = 0; i < N; i++) {
-            if(i > idxs[conv[i]]) {
+            if(i+D < N) continue;
+            if((i+D)%N > idxs[conv[i]]) {
                 canMake = false;
                 break;
             }

@@ -5,34 +5,32 @@ using namespace std;
 
 class Aaagmnrs {
 public:
-	vector<string> anagrams(vector<string> phrases);   
+	vector<string> anagrams(vector<string> phrases);
+    vector<int> makeAlphaSet(string phrases);
 };
-    
-vector<string> Aaagmnrs::anagrams(vector<string> phrases) {
-    vector<string> ret = phrases;
-	// preprocessing
-    for(int i = 0; i < phrases.size(); i++) {
-        for(int j = 0; j < phrases[i].length(); j++) {
-            if(phrases[i][j] == ' ') {
-                phrases[i].erase(j, 1);
-                continue;
-            }
-            if('A' <= phrases[i][j] && phrases[i][j] <= 'Z') phrases[i][j] = phrases[i][j]-'A'+'a';
-        }
+
+vector<int> Aaagmnrs::makeAlphaSet(string p) {
+    vector<int> s(26, 0);
+    for(int i = 0; i < p.length(); i++) {
+        if(p[i] == ' ') continue;
+        if('A' <= p[i] && p[i] <= 'Z') s[p[i]-'A'] += 1;
+        else s[p[i]-'a'] += 1;
     }
     
+    return s;
+}
+vector<string> Aaagmnrs::anagrams(vector<string> phrases) {
+    // algorithm
+    vector<string> ret;
+    vector<bool> canUse(phrases.size(), true);
+    
     for(int i = 0; i < phrases.size(); i++) {
-        vector<int> base(26, 0);
-        for(int j = 0; j < phrases[i].length(); j++) {
-        	base[phrases[i][j]-'a'] += 1;
-        }
-        
+        if(!canUse[i]) continue;
+        vector<int> base = makeAlphaSet(phrases[i]);
         
         for(int j = i+1; j < phrases.size(); j++) {
-        	vector<int> target(26, 0);
-            for(int k = 0; k < phrases[j].length(); k++) {
-            	target[phrases[j][k]-'a'] += 1;
-            }
+            if(!canUse[j]) continue;
+        	vector<int> target = makeAlphaSet(phrases[j]);
             
             bool isDiff = false;
             for(int k = 0; k < 26; k++) {
@@ -41,14 +39,12 @@ vector<string> Aaagmnrs::anagrams(vector<string> phrases) {
                     break;
                 }
             }
-            if(isDiff) continue;
-            else {
-                phrases.erase(phrases.begin()+j);
-                ret.erase(ret.begin()+j);
-            }
+            if(!isDiff) canUse[j] = false;
         }
-        
-    }            
-        
-    return ret;         
+    }      
+    
+    for(int i = 0; i < phrases.size(); i++) {
+    	if(canUse[i]) ret.push_back(phrases[i]);
+    }
+    return ret;          
 }

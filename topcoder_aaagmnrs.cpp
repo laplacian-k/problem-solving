@@ -9,6 +9,7 @@ public:
 };
     
 vector<string> Aaagmnrs::anagrams(vector<string> phrases) {
+    vector<string> ret = phrases;
 	// preprocessing
     for(int i = 0; i < phrases.size(); i++) {
         for(int j = 0; j < phrases[i].length(); j++) {
@@ -41,10 +42,13 @@ vector<string> Aaagmnrs::anagrams(vector<string> phrases) {
                 }
             }
             if(isDiff) continue;
-            else phrases.erase(phrases.begin()+j);
+            else {
+                phrases.erase(phrases.begin()+j);
+                ret.erase(ret.begin()+j);
+            }
         }
         
     }            
         
-    return phrases;         
+    return ret;         
 }

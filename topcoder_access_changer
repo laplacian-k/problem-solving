@@ -1,0 +1,19 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+class AccessChanger {
+public:
+	vector<string> convert(vector<string> program);
+};
+
+vector<string> AccessChanger::convert(vector<string> program) {
+    for(int i = 0; i < program.size(); i++) {
+        for(int j = 0; j < program[i].length()-1; j++) {
+            if(program[i][j] == '/' && program[i][j+1] == '/') break;
+            if(program[i][j] == '-' && program[i][j+1] == '>') program[i].replace(j, 2, ".");
+        }
+    }    
+    return program;    
+}

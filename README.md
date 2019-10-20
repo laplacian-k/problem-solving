@@ -1,3 +1,2 @@
 # algorithm
-This repository is for studying algorithm(codeground, algospot, topcoder, etc.)
-(Solving Strategy for Algorithm Problems)
+This repository is for studying problem solving(PS).
